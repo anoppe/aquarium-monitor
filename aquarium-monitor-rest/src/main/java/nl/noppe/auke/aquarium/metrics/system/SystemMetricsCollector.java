@@ -1,9 +1,10 @@
 package nl.noppe.auke.aquarium.metrics.system;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import com.jezhumble.javasysmon.CpuTimes;
 import com.jezhumble.javasysmon.JavaSysMon;
@@ -20,8 +21,7 @@ public class SystemMetricsCollector {
 		this.monitor = monitor;
 	}
 	
-	@Scheduled(cron="*/5 * * * * ?")
-	public void collectSystemMetrics() {
+	public SystemMetrics getSystemMetrics() {
 		CpuTimes initialTimes = monitor.cpuTimes();
 		MemoryStats memoryStats = monitor.physical();
 
@@ -34,5 +34,9 @@ public class SystemMetricsCollector {
 		
 		logger.info("cpu usage: {}", cpuUsage);
 		logger.info("RAM usage: {}", (memoryStats.getTotalBytes() - memoryStats.getFreeBytes()) / (1024 * 1024));
+		
+		SystemMetrics systemMetrics = new SystemMetrics();
+		systemMetrics.setOccuredDatetime(new Date());
+		return 	systemMetrics;
 	}
 }

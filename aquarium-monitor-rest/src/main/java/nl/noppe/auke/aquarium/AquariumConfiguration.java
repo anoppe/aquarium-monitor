@@ -15,11 +15,15 @@ import com.jezhumble.javasysmon.JavaSysMon;
 @Configuration
 @EnableAutoConfiguration
 @EnableScheduling
-@ComponentScan(basePackages={"nl.noppe.auke.aquarium.tasks"})
+@ComponentScan(basePackages={"nl.noppe.auke.aquarium.tasks", "nl.noppe.auke.aquarium.metrics"})
 public class AquariumConfiguration {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AquariumConfiguration.class);
+		
+		SpringApplication springApplication = new SpringApplication(AquariumConfiguration.class, AquariumServiceConfiguration.class);
+		springApplication.run();
+		
+//		SpringApplication.run(new Object[] {AquariumConfiguration.class, AquariumServiceConfiguration.class});
 	}
 
 	@Bean
