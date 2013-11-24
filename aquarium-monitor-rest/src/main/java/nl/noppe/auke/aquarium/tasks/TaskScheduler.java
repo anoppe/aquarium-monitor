@@ -33,4 +33,9 @@ public class TaskScheduler {
 		
 		metricsProcessor.processSystemMetrics(metrics);
 	}
+	
+	@Scheduled(cron="*/5 * * * * ?")
+	public void printSystemMetrics() {
+		
+	}
 }
