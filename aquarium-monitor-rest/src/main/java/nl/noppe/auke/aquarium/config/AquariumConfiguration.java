@@ -1,7 +1,8 @@
-package nl.noppe.auke.aquarium;
+package nl.noppe.auke.aquarium.config;
 
 import nl.noppe.auke.aquarium.metrics.system.SystemMetricsCollector;
 import nl.noppe.auke.aquarium.tasks.TaskScheduler;
+import nl.noppe.auke.aquarium.web.MetricsController;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -14,8 +15,8 @@ import com.jezhumble.javasysmon.JavaSysMon;
 
 @Configuration
 @EnableAutoConfiguration
-@EnableScheduling
-@ComponentScan(basePackages={"nl.noppe.auke.aquarium.tasks", "nl.noppe.auke.aquarium.metrics"})
+//@EnableScheduling
+@ComponentScan(basePackageClasses={MetricsController.class, AquariumConfiguration.class})
 public class AquariumConfiguration {
 
 	public static void main(String[] args) {
@@ -26,10 +27,10 @@ public class AquariumConfiguration {
 //		SpringApplication.run(new Object[] {AquariumConfiguration.class, AquariumServiceConfiguration.class});
 	}
 
-	@Bean
-	public TaskScheduler taskScheduler() {
-		return new TaskScheduler();
-	}
+//	@Bean
+//	public TaskScheduler taskScheduler() {
+//		return new TaskScheduler();
+//	}
 	
 	@Bean
 	public SystemMetricsCollector systemMetricsCollector() {
