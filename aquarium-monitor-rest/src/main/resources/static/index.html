@@ -2,10 +2,15 @@
 <html>
 <head>
     <title>Hello WebSocket</title>
+    
     <script src="sockjs-0.3.4.js"></script>
     <script src="stomp.js"></script>
+    <script src="jquery.js"></script>
+    <script src="jquery.flot.js"></script>
+    <script src="jquery.flot.time.js"></script>
     <script type="text/javascript">
-        var stompClient = null;
+    $(function() {   
+   		var stompClient = null;
 
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;
@@ -20,8 +25,10 @@
             stompClient.connect('', '', function(frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/queue/sytemMetrics', function(metric){
-                    showGreeting(JSON.parse(metric.body).usedMemory);
+                stompClient.subscribe('/queue/systemMetrics', function(metric){
+                	console.log(metric.body);
+                	onDataReceived(JSON.parse(metric.body));
+//                     showGreeting(JSON.parse(metric.body).usedMemory);
                 });
             });
         }
@@ -34,7 +41,7 @@
 
         function sendName() {
             var name = document.getElementById('name').value;
-            // stompClient.send("/app/hello", {}, {name});
+            stompClient.send("/app/systemMetrics", {}, {});
         }
 
         function showGreeting(message) {
@@ -44,6 +51,40 @@
             p.appendChild(document.createTextNode(message));
             response.appendChild(p);
         }
+        
+   		var data = [];
+   		data.push([1]);
+   		var options = {
+   			lines: {
+   				show: true
+   			},
+   			points: {
+   				show: true
+   			},
+   			xaxis: {
+   				tickDecimals: 0,
+				tickSize: 1
+   			}
+   		};
+    	
+
+   		$.plot("#placeholder", data, options);
+
+   		function onDataReceived(series) {
+   			
+   			if (data[0].length > 10) {
+   				data[0].shift();
+   			}
+			// Push the new data onto our existing data array
+			data[0].push([data[0].length - 1, series.usedMemory]);
+			$.plot("#placeholder", data, options);
+		}
+   		
+   		$('#connect').click(function() {
+   			connect();
+   		});
+   		
+    });
     </script>
 </head>
 <body>
@@ -51,7 +92,7 @@
     Javascript and reload this page!</h2></noscript>
 <div>
     <div>
-        <button id="connect" onclick="connect();">Connect</button>
+        <button id="connect" >Connect</button>
         <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
     </div>
     <div id="conversationDiv">
@@ -59,6 +100,7 @@
         <button id="sendName" onclick="sendName();">Send</button>
         <p id="response"></p>
     </div>
+    <div id="placeholder" style="width:600px;height:300px"></div>
 </div>
 </body>
 </html>

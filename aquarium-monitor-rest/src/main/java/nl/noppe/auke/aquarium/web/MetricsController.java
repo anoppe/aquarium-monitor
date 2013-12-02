@@ -21,4 +21,9 @@ public class MetricsController {
         messageTemplate.convertAndSend("/queue/greetings", message);
     }
 	
+	@MessageMapping("/systemMetrics")
+	public void metrics() {
+//		messageTemplate.convertAndSend("/queue/systemMetrics", "");
+	}
+	
 }

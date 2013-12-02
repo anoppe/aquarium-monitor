@@ -1,7 +1,7 @@
 package nl.noppe.auke.aquarium.tasks;
 
 import nl.noppe.auke.aquarium.metrics.Metrics;
-import nl.noppe.auke.aquarium.metrics.service.MetricsProcessor;
+import nl.noppe.auke.aquarium.metrics.system.SystemMetrics;
 import nl.noppe.auke.aquarium.metrics.system.SystemMetricsCollector;
 
 import org.slf4j.Logger;
@@ -15,7 +15,6 @@ public class MetricsCollectScheduler {
 	private static final Logger logger = LoggerFactory.getLogger(MetricsCollectScheduler.class);
 	
 	private SystemMetricsCollector systemMetricsCollector;
-	private MetricsProcessor metricsProcessor;
 	
 	SimpMessageSendingOperations messagingTemplate;
 	
@@ -29,19 +28,17 @@ public class MetricsCollectScheduler {
 		this.systemMetricsCollector = systemMetricsCollector;
 	}
 	
-	@Autowired
-	public void setMetricsProcessor(MetricsProcessor metricsProcessor) {
-		this.metricsProcessor = metricsProcessor;
-	}
 	
 	@Scheduled(cron="*/5 * * * * ?")
 	public void getSystemMetrics() {
 		logger.debug("starting system metrics collector");
 		Metrics metrics = systemMetricsCollector.getSystemMetrics();
+		if (metrics == null) {
+			metrics = new SystemMetrics();
+		}
+		logger.debug("Sending message to broker: " + metrics);
+		messagingTemplate.convertAndSend("/queue/systemMetrics", metrics);
 		
-		messagingTemplate.convertAndSend("/queue/metrics/", metrics);
-		
-//		metricsProcessor.processSystemMetrics(metrics);
 	}
 	
 	@Scheduled(cron="*/5 * * * * ?")

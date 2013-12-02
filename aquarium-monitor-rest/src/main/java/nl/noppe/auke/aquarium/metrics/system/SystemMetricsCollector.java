@@ -32,10 +32,14 @@ public class SystemMetricsCollector {
 		}
 		float cpuUsage = monitor.cpuTimes().getCpuUsage(initialTimes);
 		
-		logger.info("cpu usage: {}", cpuUsage);
-		logger.info("RAM usage: {}", (memoryStats.getTotalBytes() - memoryStats.getFreeBytes()) / (1024 * 1024));
+		logger.debug("cpu usage: {}", cpuUsage);
+		logger.debug("RAM usage: {}", (memoryStats.getTotalBytes() - memoryStats.getFreeBytes()) / (1024 * 1024));
 		
 		SystemMetrics systemMetrics = new SystemMetrics();
+		systemMetrics.setCpuUtilization(Double.parseDouble("" + cpuUsage));
+		systemMetrics.setFreeMemory((memoryStats.getFreeBytes() / (1024 * 1024)));
+		systemMetrics.setUsedMemory(((memoryStats.getTotalBytes() - memoryStats.getFreeBytes()) / (1024 * 1024)));
+		systemMetrics.setUsedSwap(((monitor.swap().getTotalBytes() - monitor.swap().getFreeBytes()) / (1024 * 1024)));
 		systemMetrics.setOccuredDatetime(new Date());
 		return 	systemMetrics;
 	}
