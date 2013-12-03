@@ -19,8 +19,7 @@
             document.getElementById('response').innerHTML = '';
         }
 
-        function connect() {
-            var socket = new SockJS('/systemMetrics');
+            var socket = new SockJS('systemMetrics');
             stompClient = Stomp.over(socket);
             stompClient.connect('', '', function(frame) {
                 setConnected(true);
@@ -31,7 +30,6 @@
 //                     showGreeting(JSON.parse(metric.body).usedMemory);
                 });
             });
-        }
 
         function disconnect() {
             stompClient.disconnect();
@@ -41,7 +39,7 @@
 
         function sendName() {
             var name = document.getElementById('name').value;
-            stompClient.send("/app/systemMetrics", {}, {});
+            stompClient.send("./app/systemMetrics", {}, {});
         }
 
         function showGreeting(message) {
@@ -62,8 +60,8 @@
    				show: true
    			},
    			xaxis: {
-   				tickDecimals: 0,
-				tickSize: 1
+				type : "time",
+				
    			}
    		};
     	
@@ -76,7 +74,7 @@
    				data[0].shift();
    			}
 			// Push the new data onto our existing data array
-			data[0].push([data[0].length - 1, series.usedMemory]);
+			data[0].push([series.occuredDatetime / 1000, series.usedMemory]);
 			$.plot("#placeholder", data, options);
 		}
    		
