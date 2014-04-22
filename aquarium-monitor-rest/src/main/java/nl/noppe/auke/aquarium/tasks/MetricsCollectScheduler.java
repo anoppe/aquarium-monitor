@@ -1,6 +1,10 @@
 package nl.noppe.auke.aquarium.tasks;
 
+import java.util.Date;
+
 import nl.noppe.auke.aquarium.metrics.Metrics;
+import nl.noppe.auke.aquarium.metrics.aqua.AquaMetrics;
+import nl.noppe.auke.aquarium.metrics.aqua.AquaMetricsCollector;
 import nl.noppe.auke.aquarium.metrics.system.SystemMetrics;
 import nl.noppe.auke.aquarium.metrics.system.SystemMetricsCollector;
 
@@ -15,6 +19,7 @@ public class MetricsCollectScheduler {
 	private static final Logger logger = LoggerFactory.getLogger(MetricsCollectScheduler.class);
 	
 	private SystemMetricsCollector systemMetricsCollector;
+	private AquaMetricsCollector aquaMetricsCollector;
 	
 	SimpMessageSendingOperations messagingTemplate;
 	
@@ -28,6 +33,10 @@ public class MetricsCollectScheduler {
 		this.systemMetricsCollector = systemMetricsCollector;
 	}
 	
+	@Autowired
+	public void setAquaMetricsCollector(AquaMetricsCollector aquaMetricsCollector) {
+		this.aquaMetricsCollector = aquaMetricsCollector;
+	}
 	
 	@Scheduled(cron="*/5 * * * * ?")
 	public void getSystemMetrics() {
@@ -41,8 +50,18 @@ public class MetricsCollectScheduler {
 		
 	}
 	
-	@Scheduled(cron="*/5 * * * * ?")
-	public void printSystemMetrics() {
+//	@Scheduled(cron="* * * * * ?")
+	public void getAquaMetrics() {
+		logger.debug("Requesting PH from Arduino");
+		Double ph = aquaMetricsCollector.getPh();
 		
+		AquaMetrics aquaMetrics = new AquaMetrics();
+		aquaMetrics.setPh(ph);
+		aquaMetrics.setOccuredDatetime(new Date());
+		
+		logger.debug("Sending message to broker: " + aquaMetrics);
+		
+		messagingTemplate.convertAndSend("/queue/aquaMetrics", aquaMetrics);
 	}
+	
 }

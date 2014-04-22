@@ -3,6 +3,9 @@ package nl.noppe.auke.aquarium.config;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.annotation.PostConstruct;
+
+import nl.noppe.auke.aquarium.metrics.aqua.AquaMetricsCollector;
 import nl.noppe.auke.aquarium.metrics.service.MetricsProcessor;
 import nl.noppe.auke.aquarium.metrics.system.SystemMetricsCollector;
 import nl.noppe.auke.aquarium.tasks.MetricsCollectScheduler;
@@ -46,6 +49,17 @@ public class AquariumConfiguration implements SchedulingConfigurer {
 	@Bean
 	public SystemMetricsCollector systemMetricsCollector() {
 		return new SystemMetricsCollector();
+	}
+	
+	@Bean
+	public AquaMetricsCollector aquaMetricsCollector() {
+		AquaMetricsCollector aquaMetricsCollector = new AquaMetricsCollector();
+		return aquaMetricsCollector;
+	}
+	
+	@PostConstruct
+	public void initializeSerial() {
+		aquaMetricsCollector().initialize();
 	}
 	
 	@Bean

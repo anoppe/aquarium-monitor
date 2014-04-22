@@ -1,0 +1,7 @@
+applications:
+- name: aquamonitor
+  memory: 512M
+  host: aquamonitor
+  domain: cfapps.io
+  services: {
+    }

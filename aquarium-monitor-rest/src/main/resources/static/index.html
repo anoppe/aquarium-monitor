@@ -2,14 +2,28 @@
 <html>
 <head>
     <title>Hello WebSocket</title>
-    
+    <meta http-equiv="X-UA-Compatible" content="IE=8" />
     <script src="sockjs-0.3.4.js"></script>
     <script src="stomp.js"></script>
     <script src="jquery.js"></script>
+    <script src="excanvas.min.js"></script>
     <script src="jquery.flot.js"></script>
     <script src="jquery.flot.time.js"></script>
     <script type="text/javascript">
+    
+    var appContext = window.location.pathname;
+    console.log(appContext);
+    
+    (function () {
+        var f = function () {};
+        if (!window.console) {
+            window.console = {
+                log:f, info:f, warn:f, debug:f, error:f
+            };
+        }
+    }());
     $(function() {   
+    	
    		var stompClient = null;
 
         function setConnected(connected) {
@@ -19,17 +33,19 @@
             document.getElementById('response').innerHTML = '';
         }
 
-            var socket = new SockJS('systemMetrics');
-            stompClient = Stomp.over(socket);
-            stompClient.connect('', '', function(frame) {
-                setConnected(true);
-                console.log('Connected: ' + frame);
-                stompClient.subscribe('/queue/systemMetrics', function(metric){
-                	console.log(metric.body);
-                	onDataReceived(JSON.parse(metric.body));
-//                     showGreeting(JSON.parse(metric.body).usedMemory);
-                });
+        var socket = new SockJS(appContext + 'systemMetrics');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = function(str) {
+        	console.log(str);
+        }
+        stompClient.connect('', '', function(frame) {
+            setConnected(true);
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/queue/aquaMetrics', function(metric){
+            	console.log(metric.body);
+            	onDataReceived(JSON.parse(metric.body));
             });
+        });
 
         function disconnect() {
             stompClient.disconnect();
@@ -39,7 +55,7 @@
 
         function sendName() {
             var name = document.getElementById('name').value;
-            stompClient.send("./app/systemMetrics", {}, {});
+            stompClient.send("/app/systemMetrics", {}, {});
         }
 
         function showGreeting(message) {
@@ -61,10 +77,16 @@
    			},
    			xaxis: {
 				type : "time",
-				
    			}
    		};
     	
+//    		var isIE = navigator.appName.indexOf("Microsoft") != -1;
+//     	var el = document.getElementById("placeholder");
+//     	if(isIE){
+//     	  G_vmlCanvasManager.initElement(el);//method only loaded for IE
+//     	  var ctx = el.getContext('2d');//dont know if this really is needed
+//     	}
+//     	var plot = $.plot(el, [d]);
 
    		$.plot("#placeholder", data, options);
 
@@ -74,7 +96,7 @@
    				data[0].shift();
    			}
 			// Push the new data onto our existing data array
-			data[0].push([series.occuredDatetime / 1000, series.usedMemory]);
+			data[0].push([Math.round(series.occuredDatetime / 1000), series.ph]);
 			$.plot("#placeholder", data, options);
 		}
    		
@@ -98,7 +120,7 @@
         <button id="sendName" onclick="sendName();">Send</button>
         <p id="response"></p>
     </div>
-    <div id="placeholder" style="width:600px;height:300px"></div>
+    <div id="placeholder" style="width:1000px;height:600px"></div>
 </div>
 </body>
 </html>

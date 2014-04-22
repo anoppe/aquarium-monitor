@@ -1,24 +1,25 @@
 package nl.noppe.auke.aquarium.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.EnableWebSocketMessageBroker;
-import org.springframework.messaging.simp.config.MessageBrokerConfigurer;
-import org.springframework.messaging.simp.config.StompEndpointRegistry;
-import org.springframework.messaging.simp.config.WebSocketMessageBrokerConfigurer;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
 	@Override
-	public void configureMessageBroker(MessageBrokerConfigurer config) {
-		config.enableSimpleBroker("/queue/");
-		config.setAnnotationMethodDestinationPrefixes("/app");
+	public void configureMessageBroker(MessageBrokerRegistry config) {
+		config.enableSimpleBroker("/queue");
+		config.setApplicationDestinationPrefixes("/app");
 	}
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/systemMetrics").withSockJS();
+		registry.addEndpoint("/aquaMetrics").withSockJS();
 	}
 
 }
