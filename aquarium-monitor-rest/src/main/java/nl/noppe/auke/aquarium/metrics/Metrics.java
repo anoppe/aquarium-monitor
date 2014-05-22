@@ -4,9 +4,9 @@ import java.util.Date;
 
 public interface Metrics {
 
-	Long getId();
+	String getId();
 
-	void setId(Long id);
+	void setId(String id);
 
 	Date getOccuredDatetime();
 

@@ -101,7 +101,10 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 			output.write(new String("R\r").getBytes());
 			String inputLine = null;
 			int tick = 0;
-			while((inputLine = input.readLine()) == null) {
+			while((inputLine = input.readLine()) != null) {
+				if (inputLine != null && inputLine.startsWith("PH::")) {
+					return new Double(inputLine.substring(4));
+				}
 //				tick++;
 //				if (tick == 10) {
 //					return null;
@@ -134,17 +137,17 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 		// Ignore all the other eventTypes, but you should consider the other ones.
 	}
 
-	public static void main(String[] args) throws Exception {
-		AquaMetricsCollector main = new AquaMetricsCollector();
-		main.initialize();
-		Thread t=new Thread() {
-			public void run() {
-				//the following line will keep this app alive for 1000 seconds,
-				//waiting for events to occur and responding to them (printing incoming messages to console).
-				try {Thread.sleep(1000000);} catch (InterruptedException ie) {}
-			}
-		};
-		t.start();
-		System.out.println("Started");
-	}
+//	public static void main(String[] args) throws Exception {
+//		AquaMetricsCollector main = new AquaMetricsCollector();
+//		main.initialize();
+//		Thread t=new Thread() {
+//			public void run() {
+//				//the following line will keep this app alive for 1000 seconds,
+//				//waiting for events to occur and responding to them (printing incoming messages to console).
+//				try {Thread.sleep(1000000);} catch (InterruptedException ie) {}
+//			}
+//		};
+//		t.start();
+//		System.out.println("Started");
+//	}
 }

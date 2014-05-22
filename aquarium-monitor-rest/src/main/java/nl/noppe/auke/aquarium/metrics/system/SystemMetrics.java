@@ -2,11 +2,16 @@ package nl.noppe.auke.aquarium.metrics.system;
 
 import java.util.Date;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import nl.noppe.auke.aquarium.metrics.Metrics;
 
+@Document
 public class SystemMetrics implements Metrics {
 
-	private Long id;
+	@Id
+	private String id;
 	private Date occuredDatetime;
 	private Long usedMemory;
 	private Long freeMemory;
@@ -14,14 +19,16 @@ public class SystemMetrics implements Metrics {
 	private Long usedSwap;
 	private Long availableSwap;
 
-	public Long getId() {
+	@Override
+	public String getId() {
 		return id;
 	}
-
-	public void setId(Long id) {
+	
+	@Override
+	public void setId(String id) {
 		this.id = id;
 	}
-
+	
 	public Date getOccuredDatetime() {
 		return occuredDatetime;
 	}

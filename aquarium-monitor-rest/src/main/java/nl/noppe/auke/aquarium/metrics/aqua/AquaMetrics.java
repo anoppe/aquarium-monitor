@@ -2,22 +2,25 @@ package nl.noppe.auke.aquarium.metrics.aqua;
 
 import java.util.Date;
 
+import org.springframework.data.annotation.Id;
+
 import nl.noppe.auke.aquarium.metrics.Metrics;
 
 public class AquaMetrics implements Metrics {
 
-	private Long id;
+	@Id
+	private String id;
 	private Date occuredDateTime;
 	private Double ph;
 	
 	
 	@Override
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
 	@Override
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

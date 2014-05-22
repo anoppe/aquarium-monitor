@@ -1,7 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aquarium-monitor-rest</artifactId>
-	<packaging>war</packaging>
 	<parent>
 		<groupId>nl.noppe.auke</groupId>
 		<artifactId>aquarium-monitor</artifactId>
@@ -10,6 +9,7 @@
 
 	<properties>
 		<!-- <start-class>nl.noppe.auke.aquarium.config.AquariumConfiguration</start-class> -->
+		<start-class>nl.noppe.auke.aquarium.config.AquariumConfiguration</start-class>
 	</properties>
 
 	<build>
@@ -19,25 +19,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-assembly-plugin</artifactId> -->
-<!-- 				<inherited>false</inherited> -->
-<!-- 				<configuration> -->
-<!-- 					<descriptors> -->
-<!-- 						<descriptor>src/main/assemblies/distribution.xml</descriptor> -->
-<!-- 					</descriptors> -->
-<!-- 				</configuration> -->
-<!-- 				<executions> -->
-<!-- 					<execution> -->
-<!-- 						<id>make-assembly</id> -->
-<!-- 						<phase>package</phase> -->
-<!-- 						<goals> -->
-<!-- 							<goal>single</goal> -->
-<!-- 						</goals> -->
-<!-- 					</execution> -->
-<!-- 				</executions> -->
-<!-- 			</plugin> -->
 		</plugins>
 	</build>
 
@@ -97,5 +78,10 @@
 			<artifactId>rxtx</artifactId>
 			<version>2.1.7</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
 	</dependencies>
+	<packaging>war</packaging>
 </project>
