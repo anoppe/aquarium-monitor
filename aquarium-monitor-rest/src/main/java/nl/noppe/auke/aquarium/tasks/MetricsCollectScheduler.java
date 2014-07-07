@@ -43,7 +43,7 @@ public class MetricsCollectScheduler {
 		this.aquaMetricsCollector = aquaMetricsCollector;
 	}
 	
-	@Scheduled(cron="*/5 * * * * ?")
+	@Scheduled(cron="*/10 * * * * ?")
 	public void getSystemMetrics() {
 		logger.debug("starting system metrics collector");
 		SystemMetrics metrics = systemMetricsCollector.getSystemMetrics();

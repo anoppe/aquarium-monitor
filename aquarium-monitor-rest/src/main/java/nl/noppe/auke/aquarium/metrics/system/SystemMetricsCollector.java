@@ -24,7 +24,7 @@ public class SystemMetricsCollector {
 	public SystemMetrics getSystemMetrics() {
 		CpuTimes initialTimes = monitor.cpuTimes();
 		MemoryStats memoryStats = monitor.physical();
-
+		
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -43,4 +43,9 @@ public class SystemMetricsCollector {
 		systemMetrics.setOccuredDatetime(new Date());
 		return 	systemMetrics;
 	}
+	
+	public long getMaxMemory() {
+		return monitor.physical().getTotalBytes() / (1024 * 1024);
+	}
+	
 }

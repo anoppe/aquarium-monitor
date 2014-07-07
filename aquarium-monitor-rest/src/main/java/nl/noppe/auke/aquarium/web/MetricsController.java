@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import nl.noppe.auke.aquarium.metrics.system.SystemMetrics;
+import nl.noppe.auke.aquarium.metrics.system.SystemMetricsCollector;
 import nl.noppe.auke.aquarium.persistence.SystemMetricsRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ public class MetricsController {
 
 	private SimpMessageSendingOperations messageTemplate;
 	private SystemMetricsRepository systemMetricsRepository;
+	private SystemMetricsCollector systemMetricsCollector;
 	
 	@Autowired
 	public void setMessageTemplate(SimpMessageSendingOperations messageTemplate) {
@@ -31,15 +33,21 @@ public class MetricsController {
 		this.systemMetricsRepository = systemMetricsRepository;
 	}
 	
+	@Autowired
+	public void setSystemMetricsCollector(SystemMetricsCollector systemMetricsCollector) {
+		this.systemMetricsCollector = systemMetricsCollector;
+	}
+	
 	@MessageMapping("/hello")
     public void greeting(String message) throws Exception {
         Thread.sleep(3000); // simulated delay
         messageTemplate.convertAndSend("/queue/greetings", message);
     }
 	
-	@MessageMapping("")
-	public void metrics() {
-//		messageTemplate.convertAndSend("/queue/systemMetrics", "");
+	@RequestMapping(value = "/maxmemory", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Long getMaxMemory() {
+		return systemMetricsCollector.getMaxMemory();
 	}
 	
 	@RequestMapping(value="/pastHour", produces=MediaType.APPLICATION_JSON_VALUE)

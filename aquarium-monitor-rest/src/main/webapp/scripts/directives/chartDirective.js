@@ -1,9 +1,12 @@
 'use strict';
-
-angular.module('aqua.monitor.directives').directive('myCharts', [function() {
+// <highchart id="chart1" config="highchartsNG"></highchart>
+angular.module('aqua.monitor.directives').directive('highchart', [function() {
     return {
         restrict: 'A',
         order: 9999,
+        scope : {
+        	chartData : '=ngModel'
+        },
         link: function(scope, elem, attrs) {
         	console.log(attrs);
         	
@@ -12,26 +15,23 @@ angular.module('aqua.monitor.directives').directive('myCharts', [function() {
            			lines: {
            				show: true
            			},
-           			points: {
-           				show: true
-           			},
            			xaxis: {
     				    mode: "time",   
     				    timeformat: "%h:%M:%S",
     				    timezone: "browser"
            			},
-           			points: { show: true, symbol: "cross" }
+           			points: { show: false }
            		};
-            var data = scope[attrs.ngModel];
+        	console.log(scope.chartData);
             scope.$watch(function() {
             	var sortedData = [[]]; 
-            	angular.forEach(data[0], function(v, k) {
+            	angular.forEach(scope.chartData, function(v, k) {
             		sortedData[0].push([v.occuredDatetime, v.usedMemory]);
             	});
 
-//            	while (sortedData[0].length >= 50) { 
-//        			sortedData[0].shift();
-//        		}
+            	while (sortedData[0].length >= 50) { 
+        			sortedData[0].shift();
+        		}
             	
             	return sortedData;
             }, function(v) {

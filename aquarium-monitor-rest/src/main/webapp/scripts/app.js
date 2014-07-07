@@ -18,13 +18,16 @@ var app = angular.module('aqua.monitor').config([ '$routeProvider', '$controller
 						});
 						return defer.promise;
 					} ]
-				}
+				};
 			}
 			$routeProvider.when('/', {
 				templateUrl : 'views/main.html',
-				controller : 'MainController',
+//				controller : 'MainController',
+			}).when('/graphs', {
+				templateUrl : 'views/graphs.html',
+//				controller : 'MainController',
 			}).otherwise({
 				redirectTo : '/'
-			})
+			});
 		}]);
 

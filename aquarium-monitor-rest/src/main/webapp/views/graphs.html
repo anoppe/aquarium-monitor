@@ -1,0 +1,63 @@
+<div class="container" data-ng-controller="MainController as MainCtrl">
+
+	<div class="row" contenteditable="false">
+		<div class="col-md-3" contenteditable="false">
+			<div class="panel panel-default">
+				<div class="panel-heading">Used Memory</div>
+				<div class="panel-body">
+					<div data-highchart id="systemMem" data-config="MainCtrl.systemMemNG" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Used Memory</div>
+				<div class="panel-body">
+					<div data-highchart id="systemMem" data-config="MainCtrl.systemMemNG" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Used Memory</div>
+				<div class="panel-body">
+					<div data-highchart id="systemMem" data-config="MainCtrl.systemMemNG" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Used Memory</div>
+				<div class="panel-body">
+					<div data-highchart id="systemMem" data-config="MainCtrl.systemMemNG" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Used Memory
+					<div class="btn-group right">
+						<button type="button" class="btn btn-default" ng-click="MainCtrl.getPastHour()">Past Hour</button>
+						<button type="button" class="btn btn-default" data-ng-click="MainCtrl.getPastDay()">Past Day</button>
+						<button type="button" class="btn btn-default" data-ng-click="MainCtrl.getPastWeek()">Past Week</button>
+						<button type="button" class="btn btn-default" data-ng-click="MainCtrl.getPastMonth()">Past Month</button>
+					</div>
+				</div>
+				<div class="panel-body">
+					<div data-highchart id="chart1" data-config="MainCtrl.highchartsNG"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">Used Memory</div>
+				<div class="panel-body">
+					<div data-highchart id="chart1" data-config="MainCtrl.highchartsNG"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

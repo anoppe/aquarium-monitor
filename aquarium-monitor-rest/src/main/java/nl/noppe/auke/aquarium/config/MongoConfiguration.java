@@ -20,14 +20,14 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
 		return "nl.noppe.auke.aquarium.metrics";
 	}
 	
-//	@Bean(name="mongoTemplate")
-//	public MongoTemplate systemMetricsMongoTemplate(Mongo mongo) throws UnknownHostException {
-//		return new MongoTemplate(mongo, "system_metrics");
-//	}
+	@Bean(name="mongoTemplate")
+	public MongoTemplate systemMetricsMongoTemplate(Mongo mongo) throws UnknownHostException {
+		return new MongoTemplate(mongo, "system_metrics");
+	}
 	
 	@Bean
 	public Mongo mongo() throws UnknownHostException {
-		return new MongoClient("192.168.180.128");
+		return new MongoClient("192.168.1.23");
 	}
 
 	@Override

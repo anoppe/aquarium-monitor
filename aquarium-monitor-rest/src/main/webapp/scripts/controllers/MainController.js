@@ -1,21 +1,141 @@
 'use strict';
 
-angular.module('aqua.monitor.controllers').controller('MainController', ['$scope', 'systemMetricsService', 'MessageBusService', function ($scope, systemMetricsService, MessageBusService) {
-	$scope.awesomeThings = [];
-	$scope.systemMetrics = [[1]];
-	$scope.systemMetrics[0] = systemMetricsService.pastHour();
+app.controller('MainController', ['$scope', '$timeout', 'systemMetricsService', 'MessageBusService', function ($scope, $timeout, systemMetricsService, MessageBusService) {
+	var _this = this;
+	this.highchartsNG = {
+	        options: {
+	            chart: {
+	                type: 'spline'
+	            }
+	        },
+	        xAxis: {
+                type: 'datetime',
+                title: {
+                    text: 'Date'
+                }
+            },
+	        series: [{
+	        	name : 'Used Memory',
+	            data: (function() {
+	            	var sortedData = []; 
+	            	systemMetricsService.rest.pastHour().$promise.then(function(data) {
+		            		while (data.length >= 25) { 
+		            			data.shift();
+		            		}
+	            	       angular.forEach(data, function(v, k) {
+	            	    	   sortedData.push({x: v.occuredDatetime, y: v.usedMemory});
+	            	       });
+	            	   });
+
+	            	return sortedData;
+	            	
+	            })()
+	        }],
+	        title: {
+	            text: 'Hello'
+	        },
+	        loading: false
+	    };
 	
-	MessageBusService.getMetrics(function(metrics) {
-		$scope.systemMetrics[0].push([metrics.occuredDatetime, metrics.usedMemory]);
+		this.systemMemNG = {
+	        options: {
+	            chart: {
+	                type: 'solidgauge'
+	            },
+	            pane: {
+	    	    	center: ['50%', '40%'],
+	    	    	size: '90%',
+	    	        startAngle: -90,
+	    	        endAngle: 90,
+	                background: {
+	                    backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+	                    innerRadius: '60%',
+	                    outerRadius: '100%',
+	                    shape: 'arc'
+	                }
+	            },
+	            plotOptions: {
+	                solidgauge: {
+	                    dataLabels: {
+	                        y: 5,
+	                        borderWidth: 0,
+	                        useHTML: true
+	                    }
+	                }
+	            }
+	        },
+	        yAxis: {
+	        	min: 0,
+		        max: 16000,
+				stops: [
+					[0.1, '#55BF3B'], // green
+		        	[0.5, '#DDDF0D'], // yellow
+		        	[0.9, '#DF5353'] // red
+				],
+				lineWidth: 0,
+	            minorTickInterval: null,
+	            tickPixelInterval: 400,
+	            tickWidth: 0,
+	            labels: {
+	                y: 16
+	            }        
+		    },
+		    credits: {
+		    	enabled: false
+		    },
+		    series: [{
+		        name: 'Speed',
+		        data: [0],
+		        dataLabels: {
+		        	format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+	                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
+	                   	'<span style="font-size:12px;color:silver">Mb</span></div>'
+		        },
+		        tooltip: {
+		            valueSuffix: ' Mb'
+		        }
+		    }],
+	        title: {
+	            display: false
+	        },
+	        loading: false
+	    };
+	
+	MessageBusService.getMetrics(function(metric) {
+		
+		_this.highchartsNG.series[0].data.splice(0,1);
+		_this.highchartsNG.series[0].data.push({x:metric.occuredDatetime, y:metric.usedMemory});
+		console.log(_this.systemMemNG.yAxis.max);
+		if (!_this.systemMemNG.loading) {
+			_this.systemMemNG.series[0].data[0] = metric.usedMemory;
+		}
 		$scope.$apply();
 	});
 
-	$scope.getPastHour = function() {
-		$scope.systemMetrics[0] = systemMetricsService.pastHour();
+	this.getPastHour = function() {
+		systemMetricsService.rest.pastHour().$promise.then(function(data) {
+			var sortedData = [];
+    		while (data.length >= 50) { 
+    			data.shift();
+    		}
+	       angular.forEach(data, function(v, k) {
+	    	   sortedData.push({x: v.occuredDatetime, y: v.usedMemory});
+	       });
+	       _this.highchartsNG.series[0].data = sortedData;
+	   });
 	};
 	
-	$scope.getPastDay = function() {
-		$scope.systemMetrics[0] = systemMetricsService.pastDay();
+	this.getPastDay = function() {
+		systemMetricsService.rest.pastDay().$promise.then(function(data) {
+			var sortedData = [];
+    		while (data.length >= 50) { 
+    			data.shift();
+    		}
+	       angular.forEach(data, function(v, k) {
+	    	   sortedData.push({x: v.occuredDatetime, y: v.usedMemory});
+	       });
+	       _this.highchartsNG.series[0].data = sortedData;
+		});
 	};
 	
 }]);

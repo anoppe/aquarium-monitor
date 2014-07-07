@@ -3,7 +3,6 @@ angular.module('aqua.monitor.services').service('MessageBusService', ['$q', '$ro
 	
 	var MessageBusService = {};
 	var defer = $q.defer();
-	console.log(window.location.pathname);
 	var socket = new SockJS(window.location.pathname + 'systemMetrics');
 
 	var stompClient = Stomp.over(socket);
@@ -12,7 +11,6 @@ angular.module('aqua.monitor.services').service('MessageBusService', ['$q', '$ro
 	};
 	
 	stompClient.connect({}, function(frame) {
-		console.log('Connected: ' + frame);
 		stompClient.subscribe('/queue/systemMetrics', function(metric) {
 			console.log(metric);
 			if (MessageBusService.callback) {

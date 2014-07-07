@@ -16,7 +16,8 @@
     "stomp-websocket": "~2.3.1",
     "requirejs": "~2.1.11",
     "requirejs-domready": "latest",
-    "flot": "~0.8.2"
+    "flot": "~0.8.2",
+    "highcharts": "~3.0.7"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",

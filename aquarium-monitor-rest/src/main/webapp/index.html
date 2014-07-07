@@ -2,7 +2,8 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> 
+<html class="no-js" ng-app="aqua.monitor"> <!--<![endif]-->
   <head>
     <meta charset="utf-8">
     <title></title>
@@ -52,9 +53,10 @@
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="bower_components/sockjs/sockjs.js"></script>
     <script src="bower_components/stomp-websocket/lib/stomp.js"></script>
-<!--     <script src="bower_components/requirejs/require.js"></script> -->
-    <script src="bower_components/flot/jquery.flot.js"></script>
-    <script src="bower_components/flot/jquery.flot.time.js"></script>
+    <script src="bower_components/highcharts/highcharts.js"></script>
+    <script src="bower_components/highcharts/highcharts-more.js"></script>
+	<script src="http://code.highcharts.com/modules/solid-gauge.src.js"></script>
+    <script src="bower_components/highcharts-ng/highcharts-ng.min.js"></script>
     <!-- endbower -->
 	<!-- endbuild -->
 	
@@ -65,10 +67,6 @@
     <script src="scripts/services/messageBus.js"></script>
     <script src="scripts/services/systemMetricsService.js"></script>
     <script src="scripts/controllers/MainController.js"></script>
-    <script src="scripts/directives/chartDirective.js"></script>
     <!-- endbuild -->
-	<script type="text/javascript">
-		angular.bootstrap(document, [ 'aqua.monitor' ]);
-	</script>
 </body>
 </html>
