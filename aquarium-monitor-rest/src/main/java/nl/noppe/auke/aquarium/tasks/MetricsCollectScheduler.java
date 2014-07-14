@@ -52,7 +52,11 @@ public class MetricsCollectScheduler {
 		}
 		logger.debug("Sending message to broker: {}", metrics);
 		
-		systemMetricsRepository.save(metrics);
+		try {
+			systemMetricsRepository.save(metrics);
+		} catch(Throwable t) {
+			logger.error("Unable to store metrics: {}", t.getMessage());
+		}
 		
 		messagingTemplate.convertAndSend("/queue/systemMetrics", metrics);
 		

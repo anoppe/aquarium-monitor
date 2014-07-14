@@ -2,6 +2,7 @@ package nl.noppe.auke.aquarium.config;
 
 import java.net.UnknownHostException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
@@ -15,6 +16,9 @@ import com.mongodb.MongoClient;
 @EnableMongoRepositories(basePackages="nl.noppe.auke.aquarium.persistence")
 public class MongoConfiguration extends AbstractMongoConfiguration {
 	
+	@Value("${mongo.ip}")
+	private String mongodbIpAddress;
+	
 	@Override
 	protected String getMappingBasePackage() {
 		return "nl.noppe.auke.aquarium.metrics";
@@ -27,7 +31,7 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
 	
 	@Bean
 	public Mongo mongo() throws UnknownHostException {
-		return new MongoClient("192.168.1.23");
+		return new MongoClient(mongodbIpAddress);
 	}
 
 	@Override

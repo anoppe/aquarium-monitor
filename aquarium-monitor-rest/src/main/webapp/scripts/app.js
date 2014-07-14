@@ -1,7 +1,7 @@
 'use strict';
 	
-var app = angular.module('aqua.monitor').config([ '$routeProvider', '$controllerProvider', '$provide',
-		function($routeProvider, $controllerProvider, $provide) {
+var app = angular.module('aqua.monitor').config([ '$routeProvider', '$controllerProvider', '$provide', '$httpProvider',
+		function($routeProvider, $controllerProvider, $provide, $httpProvider) {
 
 			app.register = {
 				controller : $controllerProvider.register,
@@ -21,7 +21,7 @@ var app = angular.module('aqua.monitor').config([ '$routeProvider', '$controller
 				};
 			}
 			$routeProvider.when('/', {
-				templateUrl : 'views/main.html',
+				templateUrl : 'views/graphs.html',
 //				controller : 'MainController',
 			}).when('/graphs', {
 				templateUrl : 'views/graphs.html',
@@ -29,5 +29,21 @@ var app = angular.module('aqua.monitor').config([ '$routeProvider', '$controller
 			}).otherwise({
 				redirectTo : '/'
 			});
-		}]);
+			
+			$httpProvider.interceptors.push(function($q, $rootScope) {
+                return {
+                    'request': function(config) {
+                    	console.log('request');
+                        $rootScope.$broadcast('loading-started');
+                        return config || $q.when(config);
+                    },
+                    'response': function(response) {
+                    	console.log('response');
+                        $rootScope.$broadcast('loading-complete');
+                        return response || $q.when(response);
+                    }
+                };
+            });
+		}
+]);
 
