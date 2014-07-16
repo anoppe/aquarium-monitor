@@ -2,6 +2,7 @@
 
 app.controller('MainController', ['$scope', '$timeout', 'systemMetricsService', 'MessageBusService', function ($scope, $timeout, systemMetricsService, MessageBusService) {
 	var _this = this;
+	var maxMemory = 512;
 	this.highchartsNG = function() {
 		var options = angular.copy(splineOptions);
 		options.series = [ {
@@ -62,7 +63,7 @@ app.controller('MainController', ['$scope', '$timeout', 'systemMetricsService', 
 	
 	this.systemMemNG = function() {
 		var options = angular.copy(GaugeOptions);
-		options.yAxis.max = 16000;
+		options.yAxis.max = maxMemory;
 		options.series = [{
 			name: 'Used Memory',
 			data: [0],
@@ -75,15 +76,14 @@ app.controller('MainController', ['$scope', '$timeout', 'systemMetricsService', 
 				valueSuffix: ' Mb'
 			}
 		}];
-		
 		return options;
 	}();
 	
-	this.cpuUsageNG = function() {
+	this.systemSwapNG = function() {
 		var options = angular.copy(GaugeOptions);
-		options.yAxis.max = 100;
+		options.yAxis.max = maxMemory;
 		options.series = [{
-			name: 'CPU Utilization',
+			name: 'Used Swap',
 			data: [0],
 			dataLabels: {
 				format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
@@ -97,6 +97,44 @@ app.controller('MainController', ['$scope', '$timeout', 'systemMetricsService', 
 		return options;
 	}();
 	
+	this.systemFreeNG = function() {
+		var options = angular.copy(GaugeOptions);
+		options.yAxis.max = maxMemory;
+		options.series = [{
+			name: 'Used Swap',
+			data: [0],
+			dataLabels: {
+				format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+				((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
+				'<span style="font-size:12px;color:silver">Mb</span></div>'
+			},
+			tooltip: {
+				valueSuffix: ' Mb'
+			}
+		}];
+		return options;
+	}();
+	
+	
+	this.cpuUsageNG = function() {
+		var options = angular.copy(GaugeOptions);
+		options.yAxis.max = 100;
+		options.series = [{
+			name: 'CPU Utilization',
+			data: [0],
+			dataLabels: {
+				format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+				((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
+				'<span style="font-size:12px;color:silver">%</span></div>'
+			},
+			tooltip: {
+				valueSuffix: ' %'
+			}
+		}];
+		return options;
+	}();
+	
+	
 	MessageBusService.getMetrics(function(metric) {
 		
 		_this.highchartsNG.series[0].data.splice(0,1);
@@ -107,6 +145,8 @@ app.controller('MainController', ['$scope', '$timeout', 'systemMetricsService', 
 	
 		if (!_this.systemMemNG.loading) {
 			_this.systemMemNG.series[0].data[0] = metric.usedMemory;
+			_this.systemFreeNG.series[0].data[0] = metric.freeMemory;
+			_this.systemSwapNG.series[0].data[0] = metric.usedSwap;
 			_this.cpuUsageNG.series[0].data[0] = Math.round(metric.cpuUtilization * 100) / 100;
 		}
 	
