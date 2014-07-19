@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('MainController', ['$scope', '$timeout', 'systemMetricsService', 'MessageBusService', function ($scope, $timeout, systemMetricsService, MessageBusService) {
+app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsService', 'MessageBusService', function ($scope, $timeout, systemMetricsService, MessageBusService) {
 	var _this = this;
-	var maxMemory = 512;
+	var maxMemory = 16000;
 	this.highchartsNG = function() {
 		var options = angular.copy(splineOptions);
 		options.series = [ {

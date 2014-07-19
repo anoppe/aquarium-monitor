@@ -1,0 +1,72 @@
+<div class="container" data-ng-controller="AquaMetricsController as Ctrl">
+	<div class="row">
+		<div data-loading-indicator></div>
+	</div>
+	<div class="row" contenteditable="false">
+		<div class="col-md-3" contenteditable="false">
+			<div class="panel panel-default">
+				<div class="panel-heading">Current Temperature</div>
+				<div class="panel-body">
+					<div data-highchart id="cpuUsageGauge" data-config="Ctrl.temperature" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Current Ph</div>
+				<div class="panel-body">
+					<div data-highchart id="systemMemGauge" data-config="Ctrl.ph" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Free memory</div>
+				<div class="panel-body">
+					<div data-highchart id="systemFreeGauge" data-config="Ctrl.ga" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Used Swap</div>
+				<div class="panel-body">
+					<div data-highchart id="systemSwapGauge" data-config="Ctrl.systemSwapNG" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Temperature over time
+					<div class="btn-group pull-right">
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getTemperaturePastHour()">Past Hour</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getTemperaturePastDay()">Past Day</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getTemperaturePastWeek()">Past Week</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getTemperaturePastMonth()">Past Month</button>
+					</div>
+				</div>
+				<div class="panel-body">
+					<div data-highchart id="chart1" data-config="Ctrl.temperatureGraph"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">PH over time
+				<div class="btn-group pull-right">
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getPhPastHour()">Past Hour</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getPhPastDay()">Past Day</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getPhPastWeek()">Past Week</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getPhPastMonth()">Past Month</button>
+					</div>
+				</div>
+				<div class="panel-body">
+					<div data-highchart id="chart1" data-config="Ctrl.phGraph"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

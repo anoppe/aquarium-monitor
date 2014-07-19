@@ -46,13 +46,10 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 		//First, Find an instance of serial port as set in PORT_NAMES.
 		while (portEnum.hasMoreElements()) {
 			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-//			for (String portName : PORT_NAMES) {
-				if (currPortId.getName().equals(DEVICE_NAME)) {
-					portId = currPortId;
-//					break;
-					LOGGER.debug("portID: {}", portId.toString());
-				}
-//			}
+			if (currPortId.getName().equals(DEVICE_NAME)) {
+				portId = currPortId;
+				LOGGER.debug("portID: {}", portId.toString());
+			}
 		}
 		if (portId == null) {
 			LOGGER.error("Could not find COM port.");

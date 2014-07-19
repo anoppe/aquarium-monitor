@@ -12,9 +12,14 @@ angular.module('aqua.monitor.services').service('MessageBusService', ['$q', '$ro
 	
 	stompClient.connect({}, function(frame) {
 		stompClient.subscribe('/queue/systemMetrics', function(metric) {
-			console.log(metric);
 			if (MessageBusService.callback) {
 				MessageBusService.callback(JSON.parse(metric.body));
+			}
+		});
+		
+		stompClient.subscribe('/queue/aquaMetrics', function(metric) {
+			if (MessageBusService.aquariumMetricsCallback) {
+				MessageBusService.aquariumMetricsCallback(JSON.parse(metric.body));
 			}
 		});
 	});
@@ -23,7 +28,10 @@ angular.module('aqua.monitor.services').service('MessageBusService', ['$q', '$ro
 		MessageBusService.callback = callback;
 	};
 	
-
+	MessageBusService.getAquariumMetrics = function(callback) {
+		MessageBusService.aquariumMetricsCallback = callback;
+	};
+	
 	return MessageBusService;
 }]);
 

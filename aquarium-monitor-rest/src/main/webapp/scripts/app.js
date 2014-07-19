@@ -20,25 +20,23 @@ var app = angular.module('aqua.monitor').config([ '$routeProvider', '$controller
 					} ]
 				};
 			}
-			$routeProvider.when('/', {
-				templateUrl : 'views/graphs.html',
-//				controller : 'MainController',
-			}).when('/graphs', {
-				templateUrl : 'views/graphs.html',
-//				controller : 'MainController',
+			$routeProvider.when('/system', {
+				templateUrl : 'views/system.html',
+				controller : 'SystemMetricsController',
+			}).when('/aquarium', {
+				templateUrl : 'views/aquarium.html',
+				controller : 'AquaMetricsController',
 			}).otherwise({
-				redirectTo : '/'
+				redirectTo : '/aquarium'
 			});
 			
 			$httpProvider.interceptors.push(function($q, $rootScope) {
                 return {
                     'request': function(config) {
-                    	console.log('request');
                         $rootScope.$broadcast('loading-started');
                         return config || $q.when(config);
                     },
                     'response': function(response) {
-                    	console.log('response');
                         $rootScope.$broadcast('loading-complete');
                         return response || $q.when(response);
                     }

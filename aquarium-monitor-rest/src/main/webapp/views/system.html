@@ -1,0 +1,72 @@
+<div class="container" data-ng-controller="SystemMetricsController as Ctrl">
+	<div class="row">
+		<div data-loading-indicator></div>
+	</div>
+	<div class="row" contenteditable="false">
+		<div class="col-md-3" contenteditable="false">
+			<div class="panel panel-default">
+				<div class="panel-heading">CPU Usage</div>
+				<div class="panel-body">
+					<div data-highchart id="cpuUsageGauge" data-config="Ctrl.cpuUsageNG" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Used Memory</div>
+				<div class="panel-body">
+					<div data-highchart id="systemMemGauge" data-config="Ctrl.systemMemNG" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Free memory</div>
+				<div class="panel-body">
+					<div data-highchart id="systemFreeGauge" data-config="Ctrl.systemFreeNG" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">Used Swap</div>
+				<div class="panel-body">
+					<div data-highchart id="systemSwapGauge" data-config="Ctrl.systemSwapNG" class="gauge"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					Used Memory
+					<div class="btn-group pull-right">
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getMemoryPastHour()">Past Hour</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getMemoryPastDay()">Past Day</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getMemoryPastWeek()">Past Week</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getMemoryPastMonth()">Past Month</button>
+					</div>
+				</div>
+				<div class="panel-body">
+					<div data-highchart id="chart1" data-config="Ctrl.highchartsNG"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">Cpu Utilization
+				<div class="btn-group pull-right">
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getCpuPastHour()">Past Hour</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getCpuPastDay()">Past Day</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getCpuPastWeek()">Past Week</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.getCpuPastMonth()">Past Month</button>
+					</div>
+				</div>
+				<div class="panel-body">
+					<div data-highchart id="chart1" data-config="Ctrl.cpuUsageGraph"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

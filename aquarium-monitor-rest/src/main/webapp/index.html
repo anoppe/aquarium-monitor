@@ -23,9 +23,17 @@
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-
+	<div class="navbar navbar-default navbar-fixed-top">
+	    <div class="navbar-header"><a class="navbar-brand" href="#">Brand</a></div>
+	    <ul class="nav navbar-nav">
+	     <li><a href="#/aquarium">Aquarium Metrics</a></li>
+	     <li><a href="#/system">System Metrics</a></li>
+	     <li><a href="#">More</a></li>
+	     <li><a href="#">Options</a></li>
+	      </ul>
+	</div>
     <!-- Add your site or application content here -->
-    <div class="container" ng-view=""></div>
+    <div style="padding-top: 80px;" class="container" ng-view=""></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
@@ -66,7 +74,9 @@
     <script src="scripts/factories/factories.js"></script>
     <script src="scripts/services/messageBus.js"></script>
     <script src="scripts/services/systemMetricsService.js"></script>
-    <script src="scripts/controllers/MainController.js"></script>
+    <script src="scripts/services/aquaMetricsService.js"></script>
+    <script src="scripts/controllers/SystemMetricsController.js"></script>
+    <script src="scripts/controllers/AquaMetricsController.js"></script>
     <script src="scripts/directives/LoadingIndicator.js"></script>
     <!-- endbuild -->
 </body>

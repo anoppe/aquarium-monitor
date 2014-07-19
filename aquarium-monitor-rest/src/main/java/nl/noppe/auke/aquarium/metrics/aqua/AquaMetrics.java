@@ -3,16 +3,18 @@ package nl.noppe.auke.aquarium.metrics.aqua;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import nl.noppe.auke.aquarium.metrics.Metrics;
 
+@Document
 public class AquaMetrics implements Metrics {
 
 	@Id
 	private String id;
-	private Date occuredDateTime;
+	private Date occuredDatetime;
 	private Double ph;
-	
+	private Double temperature;
 	
 	@Override
 	public String getId() {
@@ -26,12 +28,12 @@ public class AquaMetrics implements Metrics {
 
 	@Override
 	public Date getOccuredDatetime() {
-		return occuredDateTime;
+		return occuredDatetime;
 	}
 
 	@Override
 	public void setOccuredDatetime(Date occuredDatetime) {
-		this.occuredDateTime = occuredDatetime;
+		this.occuredDatetime = occuredDatetime;
 	}
 	
 	public Double getPh() {
@@ -40,6 +42,14 @@ public class AquaMetrics implements Metrics {
 	
 	public void setPh(Double ph) {
 		this.ph = ph;
+	}
+
+	public Double getTemperature() {
+		return temperature;
+	}
+
+	public void setTemperature(Double temperature) {
+		this.temperature = temperature;
 	}
 
 }
