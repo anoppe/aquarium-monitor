@@ -5,11 +5,11 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Enumeration;
+
+import nl.noppe.auke.aquarium.tasks.MetricsCollectScheduler.SerialResponseCallback;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +19,12 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AquaMetricsCollector.class);
 	
 	private SerialPort serialPort;
-	private final static String DEVICE_NAME = "/dev/tty.usbmodem1411";
+	private final static String DEVICE_NAME = "/dev/ttyACM0";
 	
-	/**
-	* A BufferedReader which will be fed by a InputStreamReader 
-	* converting the bytes into characters 
-	* making the displayed results codepage independent
-	*/
-	private BufferedReader input;
 	/** The output stream to the port */
 	private OutputStream output;
+
+	private SerialResponseCallback serialResponseCallback;
 	/** Milliseconds to block while waiting for port open */
 	private static final int TIME_OUT = 2000;
 	/** Default bits per second for COM port. */
@@ -37,8 +33,8 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 	public void initialize() {
                 // the next line is for Raspberry Pi and 
                 // gets us into the while loop and was suggested here was suggested http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
+                System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
 //                System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
-                System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/tty.usbmodem1411");
 
 		CommPortIdentifier portId = null;
 		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
@@ -68,7 +64,6 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 					SerialPort.PARITY_NONE);
 
 			// open the streams
-			input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
 			output = serialPort.getOutputStream();
 
 			// add event listeners
@@ -91,60 +86,46 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 		}
 	}
 	
-	public synchronized Double getPh() {
-		LOGGER.debug("{}", output);
-		LOGGER.debug("{}", serialPort.getName());
-		try {
-			output.write(new String("R\r").getBytes());
-			String inputLine = null;
-			int tick = 0;
-			while((inputLine = input.readLine()) != null) {
-				if (inputLine != null && inputLine.startsWith("PH::")) {
-					return new Double(inputLine.substring(4));
-				}
-//				tick++;
-//				if (tick == 10) {
-//					return null;
-//				}
-//				Thread.sleep(100);
-			}
-			return Double.parseDouble(inputLine);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			return null;
-//		} catch (InterruptedException e) {
-//			LOGGER.error(e.getMessage(), e);
-//			return null;
-		}
-		
-	}
-
 	/**
 	 * Handle an event on the serial port. Read the data and print it.
 	 */
 	public synchronized void serialEvent(SerialPortEvent oEvent) {
-		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-			try {
-				String inputLine=input.readLine();
-				System.out.println(inputLine);
-			} catch (Exception e) {
-				System.err.println(e.toString());
+		LOGGER.debug("event type: {}", oEvent.getEventType());
+		LOGGER.debug("event source: {}", oEvent.getSource());
+		try {
+			switch (oEvent.getEventType()) {
+			case SerialPortEvent.DATA_AVAILABLE:
+				LOGGER.debug("Event 'DATA_AVAILABLE' received.");
+				Thread.sleep(100);
+				byte[] readBuffer = new byte[1024];
+		        int availableBytes = serialPort.getInputStream().available();
+				if (availableBytes > 0) {
+		            // Read the serial port
+					serialPort.getInputStream().read(readBuffer, 0, availableBytes);
+		 
+					LOGGER.info("received data: {}", new String(readBuffer, 0, availableBytes));
+					serialResponseCallback.callback(new String(readBuffer, 0, availableBytes));
+					
+		        }
+				
+				break;
+
+			default:
+				break;
 			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
-		// Ignore all the other eventTypes, but you should consider the other ones.
 	}
 
-//	public static void main(String[] args) throws Exception {
-//		AquaMetricsCollector main = new AquaMetricsCollector();
-//		main.initialize();
-//		Thread t=new Thread() {
-//			public void run() {
-//				//the following line will keep this app alive for 1000 seconds,
-//				//waiting for events to occur and responding to them (printing incoming messages to console).
-//				try {Thread.sleep(1000000);} catch (InterruptedException ie) {}
-//			}
-//		};
-//		t.start();
-//		System.out.println("Started");
-//	}
+	public synchronized void getReading(SerialResponseCallback serialResponseCallback) {
+		this.serialResponseCallback = serialResponseCallback;
+		LOGGER.debug("Sending read command to Arduino");
+		try {
+			output.write(new String("R\r").getBytes());
+			
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
 }

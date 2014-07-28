@@ -24,13 +24,23 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 	<div class="navbar navbar-default navbar-fixed-top">
-	    <div class="navbar-header"><a class="navbar-brand" href="#">Brand</a></div>
+	    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-ng-init="navCollapsed = true" data-ng-click="navCollapsed = !navCollapsed">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Brand</a>
+      </div>
+      <div class="collapse navbar-collapse" data-ng-class="!navCollapsed && 'in'" data-ng-click="navCollapsed=true">
 	    <ul class="nav navbar-nav">
 	     <li><a href="#/aquarium">Aquarium Metrics</a></li>
 	     <li><a href="#/system">System Metrics</a></li>
 	     <li><a href="#">More</a></li>
 	     <li><a href="#">Options</a></li>
-	      </ul>
+		</ul>
+      </div>
 	</div>
     <!-- Add your site or application content here -->
     <div style="padding-top: 80px;" class="container" ng-view=""></div>

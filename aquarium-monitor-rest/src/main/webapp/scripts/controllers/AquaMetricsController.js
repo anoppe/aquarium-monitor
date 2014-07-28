@@ -7,7 +7,7 @@
 		this.temperatureGraph = function() {
 			var options = angular.copy(splineOptions);
 			options.series = [ {
-				name : 'Used Memory',
+				name : 'Temperature',
 				data : (function() {
 					var sortedData = [];
 					AquaMetricsService.rest.pastHour().$promise.then(function(data) {
@@ -25,42 +25,42 @@
 					return sortedData;
 
 				})()
-			} ];
+			}];
+			options.yAxis = {
+					title : {
+						text : 'in Degree C'
+					}
+			};
 			return options;
 		}();
 		        
 		
-		this.phGraph = {
-		        options: {
-		            chart: {
-		                type: 'spline'
-		            }
-		        },
-		        xAxis: {
-	                type: 'datetime',
-	                title: {
-	                    text: 'Date'
-	                }
-	            },
-		        series: [{
-		        	name : 'PH',
-		            data: (function() {
-		            	var sortedData = []; 
-		            	AquaMetricsService.rest.pastHour().$promise.then(function(data) {
-			            		while (data.length >= 25) { 
-			            			data.shift();
-			            		}
-		            	       angular.forEach(data, function(v, k) {
-		            	    	   sortedData.push({x: v.occuredDatetime, y: v.ph});
-		            	       });
-		            	   });
-
-		            	return sortedData;
-		            	
-		            })()
-		        }],
-		        loading: false
-		    };
+		this.phGraph = function() {
+			var options = angular.copy(splineOptions);
+			options.series = [{
+					name : 'PH',
+					data: (function() {
+						var sortedData = []; 
+						AquaMetricsService.rest.pastHour().$promise.then(function(data) {
+							while (data.length >= 25) { 
+								data.shift();
+							}
+							angular.forEach(data, function(v, k) {
+								sortedData.push({x: v.occuredDatetime, y: v.ph});
+							});
+						});
+						
+						return sortedData;
+						
+					})()
+				}];
+			options.yAxis = {
+					title: {
+						text: 'PH'
+					}
+			}
+			return options;
+		    }();
 		
 		this.temperature = function() {
 			var options = angular.copy(GaugeOptions);

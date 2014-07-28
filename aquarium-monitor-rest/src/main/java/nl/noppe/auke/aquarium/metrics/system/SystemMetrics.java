@@ -2,10 +2,10 @@ package nl.noppe.auke.aquarium.metrics.system;
 
 import java.util.Date;
 
+import nl.noppe.auke.aquarium.metrics.Metrics;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import nl.noppe.auke.aquarium.metrics.Metrics;
 
 @Document
 public class SystemMetrics implements Metrics {

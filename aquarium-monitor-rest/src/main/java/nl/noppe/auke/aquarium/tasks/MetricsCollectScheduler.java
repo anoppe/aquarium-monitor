@@ -1,7 +1,7 @@
 package nl.noppe.auke.aquarium.tasks;
 
+import java.io.IOException;
 import java.util.Date;
-import java.util.Random;
 
 import nl.noppe.auke.aquarium.metrics.aqua.AquaMetrics;
 import nl.noppe.auke.aquarium.metrics.aqua.AquaMetricsCollector;
@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class MetricsCollectScheduler {
 
 	private static final Logger logger = LoggerFactory.getLogger(MetricsCollectScheduler.class);
@@ -26,8 +28,6 @@ public class MetricsCollectScheduler {
 	private SystemMetricsRepository systemMetricsRepository;
 	private AquaMetricsRepository aquaMetricsRepository;
 
-	private Random rand = new Random();;
-	
 	@Autowired
 	public void setMessagingTemplate(SimpMessageSendingOperations messagingTemplate) {
 		this.messagingTemplate = messagingTemplate;
@@ -72,32 +72,47 @@ public class MetricsCollectScheduler {
 		
 	}
 	
+	@Autowired
+	ObjectMapper objectMapper;
+	
 	@Scheduled(cron="*/10 * * * * ?")
 	public void getAquaMetrics() {
 		logger.debug("Requesting PH from Arduino");
-//		Double ph = aquaMetricsCollector.getPh();
-		
 
+		aquaMetricsCollector.getReading(new SerialResponseCallback() {
+			
+			@Override
+			public void callback(String data) {
+				AquaMetrics aquaMetrics = null;
+				try {
+					aquaMetrics = objectMapper.readValue(data, AquaMetrics.class);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				if (aquaMetrics == null) {
+					logger.warn("No metrics data received!");;
+				}
+				
+				aquaMetrics.setOccuredDatetime(new Date());
+				
+				logger.debug("Sending message to broker: {}", aquaMetrics);
+				
+				try {
+					aquaMetricsRepository.save(aquaMetrics);
+				} catch (Throwable t) {
+					t.printStackTrace();
+					logger.error("Unable to store metrics: {}", t.getMessage());
+				}
+				
+				messagingTemplate.convertAndSend("/queue/aquaMetrics", aquaMetrics);
+			}
+		});
 		
-	    // nextInt is normally exclusive of the top value,
-	    // so add 1 to make it inclusive
-	    int randomNum = rand.nextInt(10 + 1);
-	    int randomTemp = rand.nextInt(40 + 1);
-		AquaMetrics aquaMetrics = new AquaMetrics();
-		aquaMetrics.setPh(Double.parseDouble("" + randomNum));
-		aquaMetrics.setTemperature(Double.parseDouble("" + randomTemp));
-		aquaMetrics.setOccuredDatetime(new Date());
-		
-		logger.debug("Sending message to broker: " + aquaMetrics);
-		
-		try {
-			aquaMetricsRepository.save(aquaMetrics);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			logger.error("Unable to store metrics: {}", t.getMessage());
-		}
-		
-		messagingTemplate.convertAndSend("/queue/aquaMetrics", aquaMetrics);
+	}
+
+	public interface SerialResponseCallback {
+		public void callback(String data);
 	}
 	
 }

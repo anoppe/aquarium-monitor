@@ -20,6 +20,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jezhumble.javasysmon.JavaSysMon;
 
 @Configuration
@@ -28,6 +30,14 @@ import com.jezhumble.javasysmon.JavaSysMon;
 @ComponentScan(basePackageClasses={MetricsCollectScheduler.class, MetricsController.class, AquariumConfiguration.class})
 public class AquariumConfiguration implements SchedulingConfigurer {
 
+	@Bean
+	ObjectMapper objectMapper() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		return objectMapper;
+	}
+	
+	
 	public static void main(String[] args) {
 		
 		SpringApplication springApplication = new SpringApplication(AquariumConfiguration.class);
@@ -61,6 +71,11 @@ public class AquariumConfiguration implements SchedulingConfigurer {
 	public void initializeSerial() {
 		aquaMetricsCollector().initialize();
 	}
+	
+//	@PreDestroy
+//	public void stopSerial() {
+//		aquaMetricsCollector().close();
+//	}
 	
 	@Bean
 	public JavaSysMon monitor() {
