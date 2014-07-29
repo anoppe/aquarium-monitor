@@ -278,5 +278,6 @@ var splineOptions = {
 			display: 'none'
 		}
 	},
-	loading : false
+	loading : false,
+	useHighStock : true
 };

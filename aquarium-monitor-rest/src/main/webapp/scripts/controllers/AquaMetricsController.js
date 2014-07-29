@@ -28,7 +28,7 @@
 			}];
 			options.yAxis = {
 					title : {
-						text : 'in Degree C'
+						text : '°C'
 					}
 			};
 			return options;
@@ -74,7 +74,7 @@
 					'<span style="font-size:12px;color:silver">Celcius</span></div>'
 				},
 				tooltip: {
-					valueSuffix: ' Mb'
+					valueSuffix: ' °C'
 				}
 			}];
 			return options;
@@ -84,7 +84,7 @@
 			var options = angular.copy(GaugeOptions);
 			options.yAxis.max = 10;
 			options.series = [{
-				name: 'Used Swap',
+				name: 'PH',
 				data: [0],
 				dataLabels: {
 					format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
@@ -92,7 +92,7 @@
 					'<span style="font-size:12px;color:silver">PH</span></div>'
 				},
 				tooltip: {
-					valueSuffix: ' Mb'
+					valueSuffix: ' PH'
 				}
 			}];
 			return options;
@@ -108,8 +108,6 @@
 			if (!_this.temperature.loading) {
 				_this.temperature.series[0].data[0] = metric.temperature;
 				_this.ph.series[0].data[0] = metric.ph;
-//				_this.systemSwapNG.series[0].data[0] = metric.usedSwap;
-//				_this.cpuUsageNG.series[0].data[0] = Math.round(metric.cpuUtilization * 100) / 100;
 			}
 		
 			$scope.$apply();
@@ -137,6 +135,7 @@
 		       angular.forEach(data, function(v, k) {
 		    	   sortedData.push({x: v.occuredDatetime, y: v.temperature});
 		       });
+		       _this.temperatureGraph.series[0].dataGrouping = {approximation: "average", enabled: true}
 		       _this.temperatureGraph.series[0].data = sortedData;
 			});
 		};
@@ -227,6 +226,7 @@ var GaugeOptions = {
 };
 
 var splineOptions = {
+	useHighStocks: true,
 	options : {
 		chart : {
 			type : 'spline'
