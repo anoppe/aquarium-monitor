@@ -3,7 +3,7 @@ angular.module('aqua.monitor.directives').directive("loadingIndicator",
 	function() {
 		return {
 			restrict : "A",
-			template : "<div>Loading...</div>",
+			template : "<div class='alert alert-warning'>Loading...</div>",
 			link : function(scope, element, attrs) {
 				scope.$on("loading-started", function(e) {
 					element.css({

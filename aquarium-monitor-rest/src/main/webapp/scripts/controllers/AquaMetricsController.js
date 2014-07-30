@@ -226,7 +226,6 @@ var GaugeOptions = {
 };
 
 var splineOptions = {
-	useHighStocks: true,
 	options : {
 		chart : {
 			type : 'spline'
