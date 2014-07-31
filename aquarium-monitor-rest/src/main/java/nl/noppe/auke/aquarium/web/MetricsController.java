@@ -3,6 +3,7 @@ package nl.noppe.auke.aquarium.web;
 import java.util.Calendar;
 import java.util.List;
 
+import nl.noppe.auke.aquarium.metrics.MaxMemory;
 import nl.noppe.auke.aquarium.metrics.system.SystemMetrics;
 import nl.noppe.auke.aquarium.metrics.system.SystemMetricsCollector;
 import nl.noppe.auke.aquarium.persistence.SystemMetricsRepository;
@@ -46,8 +47,9 @@ public class MetricsController {
 	
 	@RequestMapping(value = "/maxmemory", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Long getMaxMemory() {
-		return systemMetricsCollector.getMaxMemory();
+	public MaxMemory getMaxMemory() {
+		long maxMemory = systemMetricsCollector.getMaxMemory();
+		return new MaxMemory(maxMemory);
 	}
 	
 	@RequestMapping(value="/pastHour", produces=MediaType.APPLICATION_JSON_VALUE)

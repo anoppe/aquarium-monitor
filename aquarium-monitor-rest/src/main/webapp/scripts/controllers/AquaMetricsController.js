@@ -4,99 +4,96 @@
 	
 	app.controller('AquaMetricsController', ['$scope', 'AquaMetricsService', 'MessageBusService', function($scope, AquaMetricsService, MessageBusService) {
 		var _this = this;
-		this.temperatureGraph = function() {
-			var options = angular.copy(splineOptions);
-			options.series = [ {
-				name : 'Temperature',
-				data : (function() {
-					var sortedData = [];
-					AquaMetricsService.rest.pastHour().$promise.then(function(data) {
-						while (data.length >= 25) {
-							data.shift();
-						}
-						angular.forEach(data, function(v, k) {
-							sortedData.push({
-								x : v.occuredDatetime,
-								y : v.temperature
-							});
-						});
-					});
+		
+		AquaMetricsService.rest.pastHour().$promise.then(function(data) {
+			var temperatureData = [];
+			var phData = [];
 
-					return sortedData;
-
-				})()
-			}];
-			options.yAxis = {
+			angular.forEach(data, function(v, k) {
+				temperatureData.push({
+					x : v.occuredDatetime,
+					y : v.temperature
+				});
+				phData.push({
+					x : v.occuredDatetime,
+					y : ph
+				})
+			});
+			
+			_this.temperatureGraph = function() {
+				var options = angular.copy(splineOptions);
+				options.series = [ {
+					name : 'Temperature',
+					data : temperatureData,
+					tooltip: {
+						valueDecimals: 1,
+						valueSuffix: 'Mb'
+					},
+					turboThreshold: 0
+				}];
+				options.yAxis = {
 					title : {
 						text : '°C'
 					}
-			};
-			return options;
-		}();
-		        
-		
-		this.phGraph = function() {
-			var options = angular.copy(splineOptions);
-			options.series = [{
+				};
+				
+				return options;
+			}();
+			_this.phGraph = function() {
+				var options = angular.copy(splineOptions);
+				options.series = [{
 					name : 'PH',
-					data: (function() {
-						var sortedData = []; 
-						AquaMetricsService.rest.pastHour().$promise.then(function(data) {
-							while (data.length >= 25) { 
-								data.shift();
-							}
-							angular.forEach(data, function(v, k) {
-								sortedData.push({x: v.occuredDatetime, y: v.ph});
-							});
-						});
-						
-						return sortedData;
-						
-					})()
+					data: phData,
+					tooltip: {
+		            	valueDecimals: 1,
+		            	valueSuffix: 'Mb'
+		            },
+		            turboThreshold: 0
 				}];
-			options.yAxis = {
+				options.yAxis = {
 					title: {
 						text: 'PH'
 					}
-			}
-			return options;
-		    }();
-		
-		this.temperature = function() {
-			var options = angular.copy(GaugeOptions);
-			options.yAxis.max = 40;
-			options.series = [{
-				name: 'Temperature',
-				data: [0],
-				dataLabels: {
-					format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
-					((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
-					'<span style="font-size:12px;color:silver">Celcius</span></div>'
-				},
-				tooltip: {
-					valueSuffix: ' °C'
 				}
-			}];
-			return options;
-		}();
-		
-		this.ph = function() {
-			var options = angular.copy(GaugeOptions);
-			options.yAxis.max = 10;
-			options.series = [{
-				name: 'PH',
-				data: [0],
-				dataLabels: {
-					format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
-					((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
-					'<span style="font-size:12px;color:silver">PH</span></div>'
-				},
-				tooltip: {
-					valueSuffix: ' PH'
-				}
-			}];
-			return options;
-		}();
+				return options;
+			}();
+			
+			_this.temperature = function() {
+				var options = angular.copy(GaugeOptions);
+				options.yAxis.max = 40;
+				options.series = [{
+					name: 'Temperature',
+					data: [temperatureData[temperatureData.lengt-1].temperature],
+					dataLabels: {
+						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+						((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
+						'<span style="font-size:12px;color:silver">Celcius</span></div>'
+					},
+					tooltip: {
+						valueSuffix: ' °C'
+					}
+				}];
+				return options;
+			}();
+			
+			_this.ph = function() {
+				var options = angular.copy(GaugeOptions);
+				options.yAxis.max = 10;
+				options.series = [{
+					name: 'PH',
+					data: [phData[phData.length-1].ph],
+					dataLabels: {
+						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+						((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
+						'<span style="font-size:12px;color:silver">PH</span></div>'
+					},
+					tooltip: {
+						valueSuffix: ' PH'
+					}
+				}];
+				return options;
+			}();
+		});
 		
 		MessageBusService.getAquariumMetrics(function(metric) {
 			_this.temperatureGraph.series[0].data.splice(0,1);
@@ -228,6 +225,7 @@ var GaugeOptions = {
 var splineOptions = {
 	options : {
 		chart : {
+			zoomType: 'x',
 			type : 'spline'
 		}
 	},

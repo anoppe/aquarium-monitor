@@ -3,7 +3,7 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> 
-<html class="no-js" ng-app="aqua.monitor"> <!--<![endif]-->
+<html class="no-js" data-ng-app="aqua.monitor"> <!--<![endif]-->
   <head>
     <meta charset="utf-8">
     <title></title>
@@ -37,13 +37,11 @@
 	    <ul class="nav navbar-nav">
 	     <li><a href="#/aquarium">Aquarium Metrics</a></li>
 	     <li><a href="#/system">System Metrics</a></li>
-	     <li><a href="#">More</a></li>
-	     <li><a href="#">Options</a></li>
 		</ul>
       </div>
 	</div>
     <!-- Add your site or application content here -->
-    <div style="padding-top: 80px;" class="container" ng-view=""></div>
+    <div style="padding-top: 80px;" class="container" data-ng-view=""></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
@@ -71,7 +69,8 @@
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="bower_components/sockjs/sockjs.js"></script>
     <script src="bower_components/stomp-websocket/lib/stomp.js"></script>
-    <script src="bower_components/highcharts/highcharts.js"></script>
+<!--     <script src="bower_components/highcharts/highcharts.js"></script> -->
+    <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
     <script src="bower_components/highcharts/highcharts-more.js"></script>
 	<script src="http://code.highcharts.com/modules/solid-gauge.src.js"></script>
     <script src="bower_components/highcharts-ng/highcharts-ng.js"></script>

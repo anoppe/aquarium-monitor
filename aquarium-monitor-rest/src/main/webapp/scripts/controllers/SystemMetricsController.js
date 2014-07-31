@@ -2,148 +2,139 @@
 
 app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsService', 'MessageBusService', function ($scope, $timeout, systemMetricsService, MessageBusService) {
 	var _this = this;
-	var maxMemory = 16000;
-	this.highchartsNG = function() {
-		var options = angular.copy(splineOptions);
-		options.series = [ {
-			name : 'Used Memory',
-			data : (function() {
-				var sortedData = [];
-				systemMetricsService.rest.pastHour().$promise.then(function(data) {
-					while (data.length >= 25) {
-						data.shift();
-					}
-					angular.forEach(data, function(v, k) {
-						sortedData.push({
-							x : v.occuredDatetime,
-							y : v.usedMemory
-						});
-					});
-				});
+	var maxMemory = 0;
 
-				return sortedData;
-
-			})()
-		} ];
-		return options;
-	}();
+	systemMetricsService.rest.maxMemory().$promise.then(function(data) {
+		maxMemory = data.maxMemory;
+	}).then(
+		systemMetricsService.rest.pastHour().$promise.then(function(data) {
+		
+			var memoryData = [];
+			var cpuData  = [];
+			
+	        angular.forEach(data, function(v, k) {
+	        	memoryData.push({x: v.occuredDatetime, y: v.usedMemory});
+	        	cpuData.push({x: v.occuredDatetime, y: v.cpuUtilization});
+	        });
 	        
-	
-	this.cpuUsageGraph = {
-	        options: {
-	            chart: {
-	                type: 'spline'
-	            }
-	        },
-	        xAxis: {
-                type: 'datetime',
-                title: {
-                    text: 'Date'
-                }
-            },
-	        series: [{
-	        	name : 'Cpu Usage',
-	            data: (function() {
-	            	var sortedData = []; 
-	            	systemMetricsService.rest.pastHour().$promise.then(function(data) {
-		            		while (data.length >= 25) { 
-		            			data.shift();
-		            		}
-	            	       angular.forEach(data, function(v, k) {
-	            	    	   sortedData.push({x: v.occuredDatetime, y: v.cpuUtilization});
-	            	       });
-	            	   });
-
-	            	return sortedData;
+	        _this.highchartsNG = function() {
+				var options = angular.copy(systemSplineOptions);
+				options.series = [ {
+					name : 'Used Memory',
+					data : memoryData,
+		            tooltip: {
+		            	valueDecimals: 1,
+		            	valueSuffix: 'Mb'
+		            },
+		            turboThreshold: 0
+				}];
+				return options;
+				
+			}();
+			
+			_this.cpuUsageGraph = function() {
 	            	
-	            })()
-	        }],
-	        loading: false
-	    };
-	
-	this.systemMemNG = function() {
-		var options = angular.copy(GaugeOptions);
-		options.yAxis.max = maxMemory;
-		options.series = [{
-			name: 'Used Memory',
-			data: [0],
-			dataLabels: {
-				format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
-				((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
-				'<span style="font-size:12px;color:silver">Mb</span></div>'
-			},
-			tooltip: {
-				valueSuffix: ' Mb'
-			}
-		}];
-		return options;
-	}();
-	
-	this.systemSwapNG = function() {
-		var options = angular.copy(GaugeOptions);
-		options.yAxis.max = maxMemory;
-		options.series = [{
-			name: 'Used Swap',
-			data: [0],
-			dataLabels: {
-				format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
-				((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
-				'<span style="font-size:12px;color:silver">Mb</span></div>'
-			},
-			tooltip: {
-				valueSuffix: ' Mb'
-			}
-		}];
-		return options;
-	}();
-	
-	this.systemFreeNG = function() {
-		var options = angular.copy(GaugeOptions);
-		options.yAxis.max = maxMemory;
-		options.series = [{
-			name: 'Used Swap',
-			data: [0],
-			dataLabels: {
-				format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
-				((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
-				'<span style="font-size:12px;color:silver">Mb</span></div>'
-			},
-			tooltip: {
-				valueSuffix: ' Mb'
-			}
-		}];
-		return options;
-	}();
-	
-	
-	this.cpuUsageNG = function() {
-		var options = angular.copy(GaugeOptions);
-		options.yAxis.max = 100;
-		options.series = [{
-			name: 'CPU Utilization',
-			data: [0],
-			dataLabels: {
-				format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
-				((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
-				'<span style="font-size:12px;color:silver">%</span></div>'
-			},
-			tooltip: {
-				valueSuffix: ' %'
-			}
-		}];
-		return options;
-	}();
-	
+		       var options = angular.copy(systemSplineOptions);
+		        options.series = [{
+		        	name : 'Cpu Usage',
+		            data: cpuData,
+		            tooltip: {
+		            	valueDecimals: 1,
+		            	valueSuffix: '%'
+		            },
+		            turboThreshold: 0
+		        }];
+		        return options;
+			}();
+		
+			_this.systemMemNG = function() {
+				var options = angular.copy(GaugeOptions);
+				options.yAxis.max = maxMemory;
+				options.series = [{
+					name: 'Used Memory',
+					data: [data[data.length-1].usedMemory],
+					dataLabels: {
+						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+						((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
+						'<span style="font-size:12px;color:silver">Mb</span></div>'
+					},
+					tooltip: {
+						valueSuffix: ' Mb'
+					}
+				}];
+				return options;
+			}();
+			
+			_this.systemSwapNG = function() {
+				var options = angular.copy(GaugeOptions);
+				options.yAxis.max = maxMemory;
+				options.series = [{
+					name: 'Used Swap',
+					data: [data[data.length-1].usedSwap],
+					dataLabels: {
+						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+						((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
+						'<span style="font-size:12px;color:silver">Mb</span></div>'
+					},
+					tooltip: {
+						valueSuffix: ' Mb'
+					}
+				}];
+				return options;
+			}();
+			
+			_this.systemFreeNG = function() {
+				var options = angular.copy(GaugeOptions);
+				options.yAxis.max = maxMemory;
+				options.series = [{
+					name: 'Free memory',
+					data: [data[data.length-1].freeMemory],
+					dataLabels: {
+						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+						((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
+						'<span style="font-size:12px;color:silver">Mb</span></div>'
+					},
+					tooltip: {
+						valueSuffix: ' Mb'
+					}
+				}];
+				return options;
+			}();
+			
+			
+			_this.cpuUsageNG = function() {
+				var options = angular.copy(GaugeOptions);
+				options.yAxis.max = 100;
+				options.series = [{
+					name: 'CPU Utilization',
+					data: [data[data.length-1].cpuUtilization],
+					dataLabels: {
+						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+						((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
+						'<span style="font-size:12px;color:silver">%</span></div>'
+					},
+					tooltip: {
+						valueSuffix: ' %'
+					}
+				}];
+				
+				return options;
+			}();
+	}));
 	
 	MessageBusService.getMetrics(function(metric) {
 		
-		_this.highchartsNG.series[0].data.splice(0,1);
-		_this.highchartsNG.series[0].data.push({x:metric.occuredDatetime, y:metric.usedMemory});
+		if (!_this.highchartsNG && !_this.highchartsNG.loading) {
+			_this.highchartsNG.series[0].data.splice(0,1);
+			_this.highchartsNG.series[0].data.push({x:metric.occuredDatetime, y:metric.usedMemory});
+		}
 		
-		_this.cpuUsageGraph.series[0].data.splice(0,1);
-		_this.cpuUsageGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.cpuUtilization});
+		if (!_this.cpuUsageGraph && !_this.cpuUsageGraph.loading) {
+			_this.cpuUsageGraph.series[0].data.splice(0,1);
+			_this.cpuUsageGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.cpuUtilization});
+		}
 	
-		if (!_this.systemMemNG.loading) {
+		if (!_this.systemMemNG && !_this.systemMemNG.loading) {
 			_this.systemMemNG.series[0].data[0] = metric.usedMemory;
 			_this.systemFreeNG.series[0].data[0] = metric.freeMemory;
 			_this.systemSwapNG.series[0].data[0] = metric.usedSwap;
@@ -156,52 +147,40 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 	this.getMemoryPastHour = function() {
 		systemMetricsService.rest.pastHour().$promise.then(function(data) {
 			var sortedData = [];
-    		while (data.length >= 50) { 
-    			data.shift();
-    		}
-	       angular.forEach(data, function(v, k) {
-	    	   sortedData.push({x: v.occuredDatetime, y: v.usedMemory});
-	       });
-	       _this.highchartsNG.series[0].data = sortedData;
+			angular.forEach(data, function(v, k) {
+				sortedData.push({x: v.occuredDatetime, y: v.usedMemory});
+			});
+			_this.highchartsNG.series[0].data = sortedData;
 	   });
 	};
 	
 	this.getMemoryPastDay = function() {
 		systemMetricsService.rest.pastDay().$promise.then(function(data) {
 			var sortedData = [];
-    		while (data.length >= 50) { 
-    			data.shift();
-    		}
-	       angular.forEach(data, function(v, k) {
-	    	   sortedData.push({x: v.occuredDatetime, y: v.usedMemory});
-	       });
-	       _this.highchartsNG.series[0].data = sortedData;
+    		angular.forEach(data, function(v, k) {
+    			sortedData.push({x: v.occuredDatetime, y: v.usedMemory});
+    		});
+    		_this.highchartsNG.series[0].data = sortedData;
 		});
 	};
 	
 	this.getCpuPastHour = function() {
 		systemMetricsService.rest.pastHour().$promise.then(function(data) {
 			var sortedData = [];
-    		while (data.length >= 50) { 
-    			data.shift();
-    		}
-	       angular.forEach(data, function(v, k) {
-	    	   sortedData.push({x: v.occuredDatetime, y: v.cpuUtilization});
-	       });
-	       _this.cpuUsageGraph.series[0].data = sortedData;
+    		angular.forEach(data, function(v, k) {
+    			sortedData.push({x: v.occuredDatetime, y: v.cpuUtilization});
+    		});
+    		_this.cpuUsageGraph.series[0].data = sortedData;
 	   });
 	};
 	
 	this.getCpuPastDay = function() {
 		systemMetricsService.rest.pastDay().$promise.then(function(data) {
 			var sortedData = [];
-    		while (data.length >= 50) { 
-    			data.shift();
-    		}
-	       angular.forEach(data, function(v, k) {
-	    	   sortedData.push({x: v.occuredDatetime, y: v.cpuUtilization});
-	       });
-	       _this.cpuUsageGraph.series[0].data = sortedData;
+    		angular.forEach(data, function(v, k) {
+    			sortedData.push({x: v.occuredDatetime, y: v.cpuUtilization});
+    		});
+    		_this.cpuUsageGraph.series[0].data = sortedData;
 		});
 	};
 	
@@ -260,9 +239,46 @@ var GaugeOptions = {
     loading: false
 };
 
-var splineOptions = {
+var systemSplineOptions = {
+	credits: {
+		enabled: false
+	},
+    rangeSelector: {
+		inputEnabled: true,
+        buttons: [{
+            type: 'hour',
+            count: 1,
+            text: '1h'
+        },{
+            type: 'day',
+            count: 1,
+            text: '1d'
+        }, {
+            type: 'week',
+            count: 1,
+            text: '1w'
+        }, {
+            type: 'month',
+            count: 1,
+            text: '1m'
+        }, {
+            type: 'month',
+            count: 6,
+            text: '6m'
+        }, {
+            type: 'year',
+            count: 1,
+            text: '1y'
+        }, {
+            type: 'all',
+            text: 'All'
+        }],
+        selected: 1,
+    	allButtonsEnabled: true
+    },
 	options : {
 		chart : {
+			zoomType: 'x',
 			type : 'spline'
 		}
 	},
@@ -272,7 +288,7 @@ var splineOptions = {
 			text : 'Date'
 		}
 	},
-	title : {
+	title: {
 		text: '',
 		style: {
 			display: 'none'
