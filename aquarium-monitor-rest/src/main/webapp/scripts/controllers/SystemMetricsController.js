@@ -144,43 +144,38 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 		$scope.$apply();
 	});
 
-	this.getMemoryPastHour = function() {
+	var applyDataset = function(data) {
+		var cpuData = [];
+		var memoryData = [];
+		angular.forEach(data, function(v, k) {
+			memoryData.push({x: v.occuredDatetime, y: v.usedMemory});
+			cpuData.push({x: v.occuredDatetime, y: v.cpuUtilization});
+		});
+		_this.highchartsNG.series[0].data = memoryData;
+		_this.cpuUsageGraph.series[0].data = cpuData;
+	};
+	
+	this.pastHour = function() {
 		systemMetricsService.rest.pastHour().$promise.then(function(data) {
-			var sortedData = [];
-			angular.forEach(data, function(v, k) {
-				sortedData.push({x: v.occuredDatetime, y: v.usedMemory});
-			});
-			_this.highchartsNG.series[0].data = sortedData;
+			applyDataset(data);
 	   });
 	};
 	
-	this.getMemoryPastDay = function() {
+	this.pastDay = function() {
 		systemMetricsService.rest.pastDay().$promise.then(function(data) {
-			var sortedData = [];
-    		angular.forEach(data, function(v, k) {
-    			sortedData.push({x: v.occuredDatetime, y: v.usedMemory});
-    		});
-    		_this.highchartsNG.series[0].data = sortedData;
+			applyDataset(data);
 		});
 	};
 	
-	this.getCpuPastHour = function() {
-		systemMetricsService.rest.pastHour().$promise.then(function(data) {
-			var sortedData = [];
-    		angular.forEach(data, function(v, k) {
-    			sortedData.push({x: v.occuredDatetime, y: v.cpuUtilization});
-    		});
-    		_this.cpuUsageGraph.series[0].data = sortedData;
-	   });
+	this.pastWeek = function() {
+		systemMetricsService.rest.pastWeek().$promise.then(function(data) {
+			applyDataset(data);
+		});
 	};
-	
-	this.getCpuPastDay = function() {
-		systemMetricsService.rest.pastDay().$promise.then(function(data) {
-			var sortedData = [];
-    		angular.forEach(data, function(v, k) {
-    			sortedData.push({x: v.occuredDatetime, y: v.cpuUtilization});
-    		});
-    		_this.cpuUsageGraph.series[0].data = sortedData;
+
+	this.pastMonth = function() {
+		systemMetricsService.rest.pastMonth().$promise.then(function(data) {
+			applyDataset(data);
 		});
 	};
 	
@@ -277,6 +272,13 @@ var systemSplineOptions = {
     	allButtonsEnabled: true
     },
 	options : {
+		plotOptions: {
+			spline: {
+				marker: {
+					enabled: false
+				}
+			}
+		},
 		chart : {
 			zoomType: 'x',
 			type : 'spline'

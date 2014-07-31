@@ -40,4 +40,22 @@ public class AquaMetricsController {
 		
 		return aquaMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
 	}
+	
+	@RequestMapping(value="/pastWeek", produces=MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<AquaMetrics> getPastWeek() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, -7);
+		
+		return aquaMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+	}
+
+	@RequestMapping(value="/pastMonth", produces=MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<AquaMetrics> getPasMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -1);
+		
+		return aquaMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+	}
 }

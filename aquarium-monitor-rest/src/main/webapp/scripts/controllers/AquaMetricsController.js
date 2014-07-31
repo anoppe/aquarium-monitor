@@ -16,7 +16,7 @@
 				});
 				phData.push({
 					x : v.occuredDatetime,
-					y : ph
+					y : v.ph
 				})
 			});
 			
@@ -39,6 +39,7 @@
 				
 				return options;
 			}();
+			
 			_this.phGraph = function() {
 				var options = angular.copy(splineOptions);
 				options.series = [{
@@ -63,7 +64,7 @@
 				options.yAxis.max = 40;
 				options.series = [{
 					name: 'Temperature',
-					data: [temperatureData[temperatureData.lengt-1].temperature],
+					data: [temperatureData[temperatureData.length-1].temperature],
 					dataLabels: {
 						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
 						((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
@@ -93,73 +94,54 @@
 				}];
 				return options;
 			}();
-		});
-		
-		MessageBusService.getAquariumMetrics(function(metric) {
-			_this.temperatureGraph.series[0].data.splice(0,1);
-			_this.temperatureGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.temperature});
+		}).then(
+			MessageBusService.getAquariumMetrics(function(metric) {
+				if (!_this.temperatureGraph.loading) {
+					_this.temperatureGraph.series[0].data.splice(0,1);
+					_this.temperatureGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.temperature});
+				}
+				if (!_this.phGraph.loading) {
+					_this.phGraph.series[0].data.splice(0,1);
+					_this.phGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.ph});
+				}
+				if (!_this.temperature.loading) {
+					_this.temperature.series[0].data[0] = metric.temperature;
+					_this.ph.series[0].data[0] = metric.ph;
+				}
 			
-			_this.phGraph.series[0].data.splice(0,1);
-			_this.phGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.ph});
+				$scope.$apply();
+			})
+		);
 		
-			if (!_this.temperature.loading) {
-				_this.temperature.series[0].data[0] = metric.temperature;
-				_this.ph.series[0].data[0] = metric.ph;
-			}
+		var applyDataset = function(data) {
+			var sortedData = [];
+			var phData = [];
+			angular.forEach(data, function(v, k) {
+				sortedData.push({x: v.occuredDatetime, y: v.temperature});
+				phData.push({x: v.occuredDatetime, y: v.ph});
+			});
+			_this.temperatureGraph.series[0].data = sortedData;
+			_this.phGraph.series[0].data = sortedData;
+		}
 		
-			$scope.$apply();
-		});
-		
-		this.getTemperaturePastHour = function() {
+		this.pastHour = function() {
 			AquaMetricsService.rest.pastHour().$promise.then(function(data) {
-				var sortedData = [];
-	    		while (data.length >= 50) { 
-	    			data.shift();
-	    		}
-		       angular.forEach(data, function(v, k) {
-		    	   sortedData.push({x: v.occuredDatetime, y: v.temperature});
-		       });
-		       _this.temperatureGraph.series[0].data = sortedData;
-		   });
-		};
-		
-		this.getTemperaturePastDay = function() {
-			AquaMetricsService.rest.pastDay().$promise.then(function(data) {
-				var sortedData = [];
-	    		while (data.length >= 50) { 
-	    			data.shift();
-	    		}
-		       angular.forEach(data, function(v, k) {
-		    	   sortedData.push({x: v.occuredDatetime, y: v.temperature});
-		       });
-		       _this.temperatureGraph.series[0].dataGrouping = {approximation: "average", enabled: true}
-		       _this.temperatureGraph.series[0].data = sortedData;
+				applyDataset(data);
 			});
 		};
-		
-		this.getPhPastHour = function() {
-			AquaMetricsService.rest.pastHour().$promise.then(function(data) {
-				var sortedData = [];
-	    		while (data.length >= 50) { 
-	    			data.shift();
-	    		}
-		       angular.forEach(data, function(v, k) {
-		    	   sortedData.push({x: v.occuredDatetime, y: v.ph});
-		       });
-		       _this.phGraph.series[0].data = sortedData;
-		   });
-		};
-		
-		this.getPhPastDay = function() {
+		this.pastDay = function() {
 			AquaMetricsService.rest.pastDay().$promise.then(function(data) {
-				var sortedData = [];
-	    		while (data.length >= 50) { 
-	    			data.shift();
-	    		}
-		       angular.forEach(data, function(v, k) {
-		    	   sortedData.push({x: v.occuredDatetime, y: v.ph});
-		       });
-		       _this.phGraph.series[0].data = sortedData;
+				applyDataset(data);
+			});
+		};
+		this.pastWeek = function() {
+			AquaMetricsService.rest.pastWeek().$promise.then(function(data) {
+				applyDataset(data);
+			});
+		};
+		this.pastMonth = function() {
+			AquaMetricsService.rest.pastMonth().$promise.then(function(data) {
+				applyDataset(data);
 			});
 		};
 		
@@ -224,6 +206,13 @@ var GaugeOptions = {
 
 var splineOptions = {
 	options : {
+		plotOptions: {
+			spline: {
+				marker: {
+					enabled: false
+				}
+			}
+		},
 		chart : {
 			zoomType: 'x',
 			type : 'spline'

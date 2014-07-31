@@ -69,4 +69,22 @@ public class MetricsController {
 		
 		return systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
 	}
+	
+	@RequestMapping(value="/pastWeek", produces=MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<SystemMetrics> getPastWeek() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, -7);
+		
+		return systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+	}
+
+	@RequestMapping(value="/pastMonth", produces=MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<SystemMetrics> getPasMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -1);
+		
+		return systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+	}
 }

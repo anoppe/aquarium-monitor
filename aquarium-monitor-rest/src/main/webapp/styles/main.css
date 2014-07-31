@@ -4,7 +4,7 @@ body {
   padding-bottom: 20px;
 }
 
-.gauge {
+.gauge > .highcharts-container  {
 	 max-height: 200px;
 }
 
