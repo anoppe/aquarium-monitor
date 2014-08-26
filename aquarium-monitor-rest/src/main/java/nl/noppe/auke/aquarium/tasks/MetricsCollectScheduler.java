@@ -104,11 +104,10 @@ public class MetricsCollectScheduler {
 					t.printStackTrace();
 					logger.error("Unable to store metrics: {}", t.getMessage());
 				}
-				
 				messagingTemplate.convertAndSend("/queue/aquaMetrics", aquaMetrics);
+				
 			}
 		});
-		
 	}
 
 	public interface SerialResponseCallback {

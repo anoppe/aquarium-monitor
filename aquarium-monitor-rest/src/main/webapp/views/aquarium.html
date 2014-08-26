@@ -1,4 +1,4 @@
-<div class="container" data-ng-controller="AquaMetricsController as Ctrl">
+<div class="container" >
 	<div class="row">
 		<div class="col-md-12">
 			<div data-loading-indicator></div>
@@ -9,7 +9,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">Current Temperature</div>
 				<div class="panel-body">
-					<div data-highchart id="temperatureGauge" data-config="Ctrl.temperature" class="gauge"></div>
+					<div data-highchart id="temperatureGauge" data-config="temperature" class="gauge"></div>
 				</div>
 			</div>
 		</div>
@@ -18,7 +18,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">Current Ph</div>
 				<div class="panel-body">
-					<div data-highchart id="phGauge" data-config="Ctrl.ph" class="gauge"></div>
+					<div data-highchart id="phGauge" data-config="ph" class="gauge"></div>
 				</div>
 			</div>
 		</div>
@@ -28,10 +28,10 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<div class="btn-group">
-						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.pastHour()">Past Hour</button>
-						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.pastDay()">Past Day</button>
-						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.pastWeek()">Past Week</button>
-						<button type="button" class="btn btn-xs btn-default" data-ng-click="Ctrl.pastMonth()">Past Month</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="pastHour()">Past Hour</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="pastDay()">Past Day</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="pastWeek()">Past Week</button>
+						<button type="button" class="btn btn-xs btn-default" data-ng-click="pastMonth()">Past Month</button>
 					</div>
 				</div>
 				<div class="panel-body">
@@ -39,7 +39,7 @@
 						<div class="panel panel-default">
 							<div class="panel-body">
 								<small>Temperature over time</small>
-								<div data-highchart id="temperatureGraph" data-config="Ctrl.temperatureGraph"></div>
+								<div data-highchart id="temperatureGraph" data-config="temperatureGraph"></div>
 	               			</div>
 	               		</div>
 					</div>
@@ -47,7 +47,7 @@
 						<div class="panel panel-default">
 	                			<div class="panel-body">
 	                  				<small>Ph over time</small>
-								<div data-highchart id="phGraph" data-config="Ctrl.phGraph"></div>
+								<div data-highchart id="phGraph" data-config="phGraph"></div>
 							</div>
 	               		</div>
 	           		</div>

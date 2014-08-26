@@ -20,14 +20,14 @@
 				})
 			});
 			
-			_this.temperatureGraph = function() {
+			$scope.temperatureGraph = function() {
 				var options = angular.copy(splineOptions);
 				options.series = [ {
 					name : 'Temperature',
 					data : temperatureData,
 					tooltip: {
 						valueDecimals: 1,
-						valueSuffix: 'Mb'
+						valueSuffix: '°C'
 					},
 					turboThreshold: 0
 				}];
@@ -40,14 +40,13 @@
 				return options;
 			}();
 			
-			_this.phGraph = function() {
+			$scope.phGraph = function() {
 				var options = angular.copy(splineOptions);
 				options.series = [{
 					name : 'PH',
 					data: phData,
 					tooltip: {
 		            	valueDecimals: 1,
-		            	valueSuffix: 'Mb'
 		            },
 		            turboThreshold: 0
 				}];
@@ -59,12 +58,19 @@
 				return options;
 			}();
 			
-			_this.temperature = function() {
+			$scope.temperature = function() {
 				var options = angular.copy(GaugeOptions);
 				options.yAxis.max = 40;
 				options.series = [{
 					name: 'Temperature',
-					data: [temperatureData[temperatureData.length-1].temperature],
+					data: function() {
+						
+						if (temperatureData == null || temperatureData[temperatureData.length - 1] == null) {
+							return 0;
+						}
+						
+						return [temperatureData[temperatureData.length-1].temperature];
+					}(),
 					dataLabels: {
 						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
 						((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
@@ -77,12 +83,18 @@
 				return options;
 			}();
 			
-			_this.ph = function() {
+			$scope.ph = function() {
 				var options = angular.copy(GaugeOptions);
 				options.yAxis.max = 10;
 				options.series = [{
 					name: 'PH',
-					data: [phData[phData.length-1].ph],
+					data: function() {
+						if (phData == null || phData[phData.length -1] == null) {
+							return 3;
+						}
+						
+						return [phData[phData.length-1].ph]
+					}(),
 					dataLabels: {
 						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
 						((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
@@ -96,17 +108,17 @@
 			}();
 		}).then(
 			MessageBusService.getAquariumMetrics(function(metric) {
-				if (!_this.temperatureGraph.loading) {
-					_this.temperatureGraph.series[0].data.splice(0,1);
-					_this.temperatureGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.temperature});
+				if (!$scope.temperatureGraph.loading) {
+					$scope.temperatureGraph.series[0].data.splice(0,1);
+					$scope.temperatureGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.temperature});
 				}
-				if (!_this.phGraph.loading) {
-					_this.phGraph.series[0].data.splice(0,1);
-					_this.phGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.ph});
+				if (!$scope.phGraph.loading) {
+					$scope.phGraph.series[0].data.splice(0,1);
+					$scope.phGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.ph});
 				}
-				if (!_this.temperature.loading) {
-					_this.temperature.series[0].data[0] = metric.temperature;
-					_this.ph.series[0].data[0] = metric.ph;
+				if (!$scope.temperature.loading) {
+					$scope.temperature.series[0].data[0] = metric.temperature;
+					$scope.ph.series[0].data[0] = metric.ph;
 				}
 			
 				$scope.$apply();
@@ -114,32 +126,32 @@
 		);
 		
 		var applyDataset = function(data) {
-			var sortedData = [];
+			var temperatureData = [];
 			var phData = [];
 			angular.forEach(data, function(v, k) {
-				sortedData.push({x: v.occuredDatetime, y: v.temperature});
+				temperatureData.push({x: v.occuredDatetime, y: v.temperature});
 				phData.push({x: v.occuredDatetime, y: v.ph});
 			});
-			_this.temperatureGraph.series[0].data = sortedData;
-			_this.phGraph.series[0].data = sortedData;
+			$scope.temperatureGraph.series[0].data = temperatureData;
+			$scope.phGraph.series[0].data = phData;
 		}
 		
-		this.pastHour = function() {
+		$scope.pastHour = function() {
 			AquaMetricsService.rest.pastHour().$promise.then(function(data) {
 				applyDataset(data);
 			});
 		};
-		this.pastDay = function() {
+		$scope.pastDay = function() {
 			AquaMetricsService.rest.pastDay().$promise.then(function(data) {
 				applyDataset(data);
 			});
 		};
-		this.pastWeek = function() {
+		$scope.pastWeek = function() {
 			AquaMetricsService.rest.pastWeek().$promise.then(function(data) {
 				applyDataset(data);
 			});
 		};
-		this.pastMonth = function() {
+		$scope.pastMonth = function() {
 			AquaMetricsService.rest.pastMonth().$promise.then(function(data) {
 				applyDataset(data);
 			});
@@ -156,7 +168,7 @@ var GaugeOptions = {
             type: 'solidgauge'
         },
         pane: {
-	    	center: ['50%', '30%'],
+	    	center: ['50%', '50%'],
 	    	size: '90%',
 	        startAngle: -90,
 	        endAngle: 90,
@@ -198,13 +210,15 @@ var GaugeOptions = {
     	enabled: false
     },
     title: {
-        text : '',
-        style : {display: 'none'}
+        text : null,
     },
     loading: false
 };
 
 var splineOptions = {
+	credits : {
+		enabled : false
+	},
 	options : {
 		plotOptions: {
 			spline: {
@@ -216,7 +230,32 @@ var splineOptions = {
 		chart : {
 			zoomType: 'x',
 			type : 'spline'
-		}
+		},
+		rangeSelector: {
+			buttons: [{
+				type: 'hour',
+				count: 1,
+				text: '1h'
+			},{
+				type: 'day',
+				count: 1,
+				text: '1d'
+			}, {
+				type: 'week',
+				count: 1,
+				text: '1w'
+			}, {
+				type: 'month',
+				count: 1,
+				text: '1m'
+			}],
+			selected: 1,
+			allButtonsEnabled: true,
+			inputEnabled: false
+		},
+		title: {
+	        text : null,
+	    }
 	},
 	xAxis : {
 		type : 'datetime',
@@ -224,11 +263,6 @@ var splineOptions = {
 			text : 'Date'
 		}
 	},
-	title : {
-		text: '',
-		style: {
-			display: 'none'
-		}
-	},
-	loading : false
+	loading : false,
+	useHighStocks : true
 };

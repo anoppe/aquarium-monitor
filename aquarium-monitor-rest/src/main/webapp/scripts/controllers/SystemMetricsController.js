@@ -17,7 +17,7 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 	        	cpuData.push({x: v.occuredDatetime, y: v.cpuUtilization});
 	        });
 	        
-	        _this.highchartsNG = function() {
+	        $scope.highchartsNG = function() {
 				var options = angular.copy(systemSplineOptions);
 				options.series = [ {
 					name : 'Used Memory',
@@ -32,7 +32,7 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 				
 			}();
 			
-			_this.cpuUsageGraph = function() {
+			$scope.cpuUsageGraph = function() {
 	            	
 		       var options = angular.copy(systemSplineOptions);
 		        options.series = [{
@@ -47,8 +47,8 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 		        return options;
 			}();
 		
-			_this.systemMemNG = function() {
-				var options = angular.copy(GaugeOptions);
+			$scope.systemMemNG = function() {
+				var options = angular.copy(systemGaugeOptions );
 				options.yAxis.max = maxMemory;
 				options.series = [{
 					name: 'Used Memory',
@@ -65,8 +65,8 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 				return options;
 			}();
 			
-			_this.systemSwapNG = function() {
-				var options = angular.copy(GaugeOptions);
+			$scope.systemSwapNG = function() {
+				var options = angular.copy(systemGaugeOptions );
 				options.yAxis.max = maxMemory;
 				options.series = [{
 					name: 'Used Swap',
@@ -83,8 +83,8 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 				return options;
 			}();
 			
-			_this.systemFreeNG = function() {
-				var options = angular.copy(GaugeOptions);
+			$scope.systemFreeNG = function() {
+				var options = angular.copy(systemGaugeOptions );
 				options.yAxis.max = maxMemory;
 				options.series = [{
 					name: 'Free memory',
@@ -102,8 +102,8 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 			}();
 			
 			
-			_this.cpuUsageNG = function() {
-				var options = angular.copy(GaugeOptions);
+			$scope.cpuUsageNG = function() {
+				var options = angular.copy(systemGaugeOptions );
 				options.yAxis.max = 100;
 				options.series = [{
 					name: 'CPU Utilization',
@@ -124,24 +124,23 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 	
 	MessageBusService.getMetrics(function(metric) {
 		
-		if (!_this.highchartsNG && !_this.highchartsNG.loading) {
-			_this.highchartsNG.series[0].data.splice(0,1);
-			_this.highchartsNG.series[0].data.push({x:metric.occuredDatetime, y:metric.usedMemory});
+		if ($scope.highchartsNG && !$scope.highchartsNG.loading) {
+			$scope.highchartsNG.series[0].data.splice(0,1);
+			$scope.highchartsNG.series[0].data.push({x:metric.occuredDatetime, y:metric.usedMemory});
 		}
 		
-		if (!_this.cpuUsageGraph && !_this.cpuUsageGraph.loading) {
-			_this.cpuUsageGraph.series[0].data.splice(0,1);
-			_this.cpuUsageGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.cpuUtilization});
+		if ($scope.cpuUsageGraph && !$scope.cpuUsageGraph.loading) {
+			$scope.cpuUsageGraph.series[0].data.splice(0,1);
+			$scope.cpuUsageGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.cpuUtilization});
 		}
 	
-		if (!_this.systemMemNG && !_this.systemMemNG.loading) {
-			_this.systemMemNG.series[0].data[0] = metric.usedMemory;
-			_this.systemFreeNG.series[0].data[0] = metric.freeMemory;
-			_this.systemSwapNG.series[0].data[0] = metric.usedSwap;
-			_this.cpuUsageNG.series[0].data[0] = Math.round(metric.cpuUtilization * 100) / 100;
+		if ($scope.systemMemNG && !$scope.systemMemNG.loading) {
+			$scope.systemMemNG.series[0].data[0] = metric.usedMemory;
+			$scope.systemFreeNG.series[0].data[0] = metric.freeMemory;
+			$scope.systemSwapNG.series[0].data[0] = metric.usedSwap;
+			$scope.cpuUsageNG.series[0].data[0] = Math.round(metric.cpuUtilization * 100) / 100;
 		}
 	
-		$scope.$apply();
 	});
 
 	var applyDataset = function(data) {
@@ -151,44 +150,42 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 			memoryData.push({x: v.occuredDatetime, y: v.usedMemory});
 			cpuData.push({x: v.occuredDatetime, y: v.cpuUtilization});
 		});
-		_this.highchartsNG.series[0].data = memoryData;
-		_this.cpuUsageGraph.series[0].data = cpuData;
+		$scope.highchartsNG.series[0].data = memoryData;
+		$scope.cpuUsageGraph.series[0].data = cpuData;
 	};
 	
-	this.pastHour = function() {
+	$scope.pastHour = function() {
 		systemMetricsService.rest.pastHour().$promise.then(function(data) {
 			applyDataset(data);
 	   });
 	};
 	
-	this.pastDay = function() {
+	$scope.pastDay = function() {
 		systemMetricsService.rest.pastDay().$promise.then(function(data) {
 			applyDataset(data);
 		});
 	};
 	
-	this.pastWeek = function() {
+	$scope.pastWeek = function() {
 		systemMetricsService.rest.pastWeek().$promise.then(function(data) {
 			applyDataset(data);
 		});
 	};
 
-	this.pastMonth = function() {
+	$scope.pastMonth = function() {
 		systemMetricsService.rest.pastMonth().$promise.then(function(data) {
 			applyDataset(data);
 		});
 	};
-	
 }]);
 
 
-var GaugeOptions = {
+var systemGaugeOptions = {
 	options: {
         chart: {
             type: 'solidgauge'
         },
         pane: {
-	    	center: ['50%', '30%'],
 	    	size: '90%',
 	        startAngle: -90,
 	        endAngle: 90,
@@ -196,7 +193,7 @@ var GaugeOptions = {
                 backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
                 innerRadius: '60%',
                 outerRadius: '100%',
-                shape: 'arc'
+                shape: 'solid'
             }
         },
         plotOptions: {
@@ -207,6 +204,9 @@ var GaugeOptions = {
                     useHTML: true
                 }
             }
+        },
+        title: {
+        	text : null,
         }
     },
     yAxis: {
@@ -227,10 +227,6 @@ var GaugeOptions = {
     credits: {
     	enabled: false
     },
-    title: {
-        text : '',
-        style : {display: 'none'}
-    },
     loading: false
 };
 
@@ -238,39 +234,6 @@ var systemSplineOptions = {
 	credits: {
 		enabled: false
 	},
-    rangeSelector: {
-		inputEnabled: true,
-        buttons: [{
-            type: 'hour',
-            count: 1,
-            text: '1h'
-        },{
-            type: 'day',
-            count: 1,
-            text: '1d'
-        }, {
-            type: 'week',
-            count: 1,
-            text: '1w'
-        }, {
-            type: 'month',
-            count: 1,
-            text: '1m'
-        }, {
-            type: 'month',
-            count: 6,
-            text: '6m'
-        }, {
-            type: 'year',
-            count: 1,
-            text: '1y'
-        }, {
-            type: 'all',
-            text: 'All'
-        }],
-        selected: 1,
-    	allButtonsEnabled: true
-    },
 	options : {
 		plotOptions: {
 			spline: {
@@ -282,7 +245,32 @@ var systemSplineOptions = {
 		chart : {
 			zoomType: 'x',
 			type : 'spline'
-		}
+		},
+		rangeSelector: {
+	        buttons: [{
+	            type: 'hour',
+	            count: 1,
+	            text: '1h'
+	        },{
+	            type: 'day',
+	            count: 1,
+	            text: '1d'
+	        }, {
+	            type: 'week',
+	            count: 1,
+	            text: '1w'
+	        }, {
+	            type: 'month',
+	            count: 1,
+	            text: '1m'
+	        }],
+	        selected: 1,
+	    	allButtonsEnabled: true,
+	    	inputEnabled: false
+	    },
+	    title: {
+	    	text: null
+	    },
 	},
 	xAxis : {
 		type : 'datetime',
@@ -290,12 +278,6 @@ var systemSplineOptions = {
 			text : 'Date'
 		}
 	},
-	title: {
-		text: '',
-		style: {
-			display: 'none'
-		}
-	},
 	loading : false,
-	useHighStock : true
+	useHighStocks : true
 };

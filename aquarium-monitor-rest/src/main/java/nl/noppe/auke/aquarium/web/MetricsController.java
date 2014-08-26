@@ -1,6 +1,8 @@
 package nl.noppe.auke.aquarium.web;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import nl.noppe.auke.aquarium.metrics.MaxMemory;
@@ -58,7 +60,9 @@ public class MetricsController {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.HOUR, -1);
 		
-		return systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+		List<SystemMetrics> results = systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+		
+		return aggregateSystemMetrics(results); 
 	}
 	
 	@RequestMapping(value="/pastDay", produces=MediaType.APPLICATION_JSON_VALUE)
@@ -67,7 +71,9 @@ public class MetricsController {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_WEEK, -1);
 		
-		return systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+		List<SystemMetrics> results = systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+		
+		return aggregateSystemMetrics(results);
 	}
 	
 	@RequestMapping(value="/pastWeek", produces=MediaType.APPLICATION_JSON_VALUE)
@@ -76,7 +82,9 @@ public class MetricsController {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_MONTH, -7);
 		
-		return systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+		List<SystemMetrics> results = systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+		
+		return aggregateSystemMetrics(results);
 	}
 
 	@RequestMapping(value="/pastMonth", produces=MediaType.APPLICATION_JSON_VALUE)
@@ -85,6 +93,49 @@ public class MetricsController {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, -1);
 		
-		return systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+		List<SystemMetrics> results = systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
+		
+		return aggregateSystemMetrics(results);
+	}
+	
+	private List<SystemMetrics> aggregateSystemMetrics(List<SystemMetrics> results) {
+		List<SystemMetrics> aggregatedResults = new ArrayList<>();
+		Date date = results.get(0).getOccuredDatetime();
+		Double cpuUtilization = 0d;
+		Long freeMemory = 0l;
+		Long usedMemory = 0l;
+		Long usedSwap = 0l;
+		long count = 0;
+		
+		for (SystemMetrics systemMetrics : results) {
+			cpuUtilization += systemMetrics.getCpuUtilization();
+			freeMemory += systemMetrics.getFreeMemory();
+			usedMemory += systemMetrics.getUsedMemory();
+			usedSwap += systemMetrics.getUsedSwap();
+			count++;
+
+			if ((systemMetrics.getOccuredDatetime().getTime() - date.getTime()) >= 300000) {
+				SystemMetrics aggregatedSystemMetrics = new SystemMetrics();
+				aggregatedSystemMetrics.setCpuUtilization((cpuUtilization / count));
+				aggregatedSystemMetrics.setFreeMemory((freeMemory / count));
+				aggregatedSystemMetrics.setOccuredDatetime(date);
+				aggregatedSystemMetrics.setUsedMemory((usedMemory / count));
+				aggregatedSystemMetrics.setUsedSwap((usedSwap / count));
+
+				aggregatedResults.add(aggregatedSystemMetrics);
+				
+				date = systemMetrics.getOccuredDatetime();
+				cpuUtilization = 0d;
+				freeMemory = 0l;
+				usedMemory = 0l;
+				usedSwap = 0l;
+				count = 0;
+				
+				continue;
+			}
+			
+		}
+		
+		return aggregatedResults;
 	}
 }
