@@ -73,10 +73,16 @@
     <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
     <script src="bower_components/highcharts/highcharts-more.js"></script>
 	<script src="http://code.highcharts.com/modules/solid-gauge.src.js"></script>
+	<script type="text/javascript">
+		Highcharts.setOptions({
+			global: {
+				useUTC: false
+			}
+		});
+	</script>
     <script src="bower_components/highcharts-ng/highcharts-ng.js"></script>
     <!-- endbower -->
 	<!-- endbuild -->
-	
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/modules.js"></script>
     <script src="scripts/app.js"></script>
