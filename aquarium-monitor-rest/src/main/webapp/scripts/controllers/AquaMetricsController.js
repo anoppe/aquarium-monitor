@@ -109,11 +109,9 @@
 		}).then(
 			MessageBusService.getAquariumMetrics(function(metric) {
 				if (!$scope.temperatureGraph.loading) {
-					$scope.temperatureGraph.series[0].data.splice(0,1);
 					$scope.temperatureGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.temperature});
 				}
 				if (!$scope.phGraph.loading) {
-					$scope.phGraph.series[0].data.splice(0,1);
 					$scope.phGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.ph});
 				}
 				if (!$scope.temperature.loading) {
