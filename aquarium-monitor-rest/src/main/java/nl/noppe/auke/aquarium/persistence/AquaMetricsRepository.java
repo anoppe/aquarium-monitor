@@ -5,13 +5,14 @@ import java.util.List;
 
 import nl.noppe.auke.aquarium.metrics.aqua.AquaMetrics;
 
-import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AquaMetricsRepository extends CrudRepository<AquaMetrics, String> {
 
-	@Query("{ 'occuredDatetime' : {'$gt' : ?0} }")
-	List<AquaMetrics> findByDateTimeGreaterThan(Date from);
+	@Query("FROM AquaMetrics a where a.occuredDatetime > :from")
+	List<AquaMetrics> findByDateTimeGreaterThan(@Param("from") Date from);
 }

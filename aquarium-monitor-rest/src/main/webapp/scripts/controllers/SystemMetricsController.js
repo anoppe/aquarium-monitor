@@ -8,7 +8,6 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 		maxMemory = data.maxMemory;
 	}).then(
 		systemMetricsService.rest.pastHour().$promise.then(function(data) {
-		
 			var memoryData = [];
 			var cpuData  = [];
 			
@@ -123,14 +122,13 @@ app.controller('SystemMetricsController', ['$scope', '$timeout', 'systemMetricsS
 	}));
 	
 	MessageBusService.getMetrics(function(metric) {
-		
 		if ($scope.highchartsNG && !$scope.highchartsNG.loading) {
-			$scope.highchartsNG.series[0].data.splice(0,1);
+//			$scope.highchartsNG.series[0].data.splice(0,1);
 			$scope.highchartsNG.series[0].data.push({x:metric.occuredDatetime, y:metric.usedMemory});
 		}
 		
 		if ($scope.cpuUsageGraph && !$scope.cpuUsageGraph.loading) {
-			$scope.cpuUsageGraph.series[0].data.splice(0,1);
+//			$scope.cpuUsageGraph.series[0].data.splice(0,1);
 			$scope.cpuUsageGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.cpuUtilization});
 		}
 	

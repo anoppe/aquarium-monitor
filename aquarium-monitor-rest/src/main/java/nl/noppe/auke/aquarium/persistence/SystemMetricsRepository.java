@@ -5,8 +5,9 @@ import java.util.List;
 
 import nl.noppe.auke.aquarium.metrics.system.SystemMetrics;
 
-import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -18,6 +19,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SystemMetricsRepository extends CrudRepository<SystemMetrics, String> {
 
-	@Query("{ 'occuredDatetime' : {'$gt' : ?0} }")
-	List<SystemMetrics> findByDateTimeGreaterThan(Date from);
+	@Query("FROM SystemMetrics s where s.occuredDatetime > :from")
+	List<SystemMetrics> findByDateTimeGreaterThan(@Param("from") Date from);
 }

@@ -64,12 +64,11 @@
 				options.series = [{
 					name: 'Temperature',
 					data: function() {
-						
 						if (temperatureData == null || temperatureData[temperatureData.length - 1] == null) {
 							return 0;
 						}
-						
-						return [temperatureData[temperatureData.length-1].temperature];
+						var rawTemp = temperatureData[temperatureData.length-1].y;
+						return [Math.round(rawTemp * 100) / 100];
 					}(),
 					dataLabels: {
 						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
@@ -89,11 +88,13 @@
 				options.series = [{
 					name: 'PH',
 					data: function() {
+						console.log(phData);
 						if (phData == null || phData[phData.length -1] == null) {
-							return 3;
+							return 0;
 						}
-						
-						return [phData[phData.length-1].ph]
+						var rawPh = phData[phData.length -1].y;
+						console.log(rawPh);
+						return [Math.round(rawPh * 100) / 100];
 					}(),
 					dataLabels: {
 						format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
@@ -111,14 +112,21 @@
 				if (!$scope.temperatureGraph.loading) {
 					$scope.temperatureGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.temperature});
 				}
+				
 				if (!$scope.phGraph.loading) {
+					
 					$scope.phGraph.series[0].data.push({x:metric.occuredDatetime, y:metric.ph});
 				}
+				
 				if (!$scope.temperature.loading) {
-					$scope.temperature.series[0].data[0] = metric.temperature;
+					console.log($scope.temperature.series[0]);
+					$scope.temperature.series[0].data[0] = [metric.temperature];
+				}
+
+				if (!$scope.ph.loading) {
 					$scope.ph.series[0].data[0] = metric.ph;
 				}
-			
+
 				$scope.$apply();
 			})
 		);

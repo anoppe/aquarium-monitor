@@ -2,30 +2,45 @@ package nl.noppe.auke.aquarium.metrics.system;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import nl.noppe.auke.aquarium.metrics.Metrics;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document
+@Entity
+@Table(name="tbl_system_metrics")
 public class SystemMetrics implements Metrics {
 
 	@Id
-	private String id;
+	@GeneratedValue
+	@Column(name="system_metrics_id")
+	private Long id;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="occured_datetime")
 	private Date occuredDatetime;
+	@Column(name="used_memory")
 	private Long usedMemory;
+	@Column(name="free_memory")
 	private Long freeMemory;
+	@Column(name="cpu_utilization")
 	private Double cpuUtilization;
+	@Column(name="used_swap")
 	private Long usedSwap;
+	@Column(name="available_swap")
 	private Long availableSwap;
 
 	@Override
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 	
 	@Override
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	

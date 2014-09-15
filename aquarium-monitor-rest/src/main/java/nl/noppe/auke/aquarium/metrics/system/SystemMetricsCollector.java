@@ -40,6 +40,7 @@ public class SystemMetricsCollector {
 		systemMetrics.setFreeMemory((memoryStats.getFreeBytes() / (1024 * 1024)));
 		systemMetrics.setUsedMemory(((memoryStats.getTotalBytes() - memoryStats.getFreeBytes()) / (1024 * 1024)));
 		systemMetrics.setUsedSwap(((monitor.swap().getTotalBytes() - monitor.swap().getFreeBytes()) / (1024 * 1024)));
+		systemMetrics.setAvailableSwap(monitor.swap().getFreeBytes());
 		systemMetrics.setOccuredDatetime(new Date());
 		return 	systemMetrics;
 	}

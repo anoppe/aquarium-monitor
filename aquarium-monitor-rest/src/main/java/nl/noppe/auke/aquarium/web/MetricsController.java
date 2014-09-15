@@ -61,8 +61,8 @@ public class MetricsController {
 		calendar.add(Calendar.HOUR, -1);
 		
 		List<SystemMetrics> results = systemMetricsRepository.findByDateTimeGreaterThan(calendar.getTime());
-		
-		return aggregateSystemMetrics(results); 
+		return results;
+//		return aggregateSystemMetrics(results); 
 	}
 	
 	@RequestMapping(value="/pastDay", produces=MediaType.APPLICATION_JSON_VALUE)
@@ -100,6 +100,10 @@ public class MetricsController {
 	
 	private List<SystemMetrics> aggregateSystemMetrics(List<SystemMetrics> results) {
 		List<SystemMetrics> aggregatedResults = new ArrayList<>();
+		if (results == null || results.isEmpty()) {
+			return aggregatedResults;
+		}
+		
 		Date date = results.get(0).getOccuredDatetime();
 		Double cpuUtilization = 0d;
 		Long freeMemory = 0l;

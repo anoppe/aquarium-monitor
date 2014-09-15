@@ -2,29 +2,43 @@ package nl.noppe.auke.aquarium.metrics.aqua;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import nl.noppe.auke.aquarium.metrics.Metrics;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-
-@Document
+@Entity
+@Table(name="tbl_aqua_metrics")
 public class AquaMetrics implements Metrics {
 
 	@Id
-	private String id;
-	@Field(value="occuredDatetime")
+	@GeneratedValue
+	@Column(name="aqua_metrics_id")
+	private Long id;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="occured_datetime")
 	private Date occuredDatetime;
+	@Column(name="ph")
 	private Double ph;
+	@Column(name="temperature")
 	private Double temperature;
+	@Column(name="current")
+	private Double current;
+	
 	
 	@Override
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
 	@Override
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -51,7 +65,15 @@ public class AquaMetrics implements Metrics {
 	public void setTemperature(Double temperature) {
 		this.temperature = temperature;
 	}
+	
+	public Double getCurrent() {
+		return current;
+	}
 
+	public void setCurrent(Double current) {
+		this.current = current;
+	}
+	
 	@Override
 	public String toString() {
 		return "AquaMetrics [id=" + id + ", occuredDatetime=" + occuredDatetime + ", ph=" + ph + ", temperature=" + temperature + "]";
