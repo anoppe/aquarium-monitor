@@ -28,7 +28,7 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 	/** Milliseconds to block while waiting for port open */
 	private static final int TIME_OUT = 2000;
 	/** Default bits per second for COM port. */
-	private static final int DATA_RATE = 38400;
+	private static final int DATA_RATE = 115200;
 
 	public void initialize() {
                 // the next line is for Raspberry Pi and 
