@@ -79,25 +79,25 @@ public class MetricsCollectScheduler {
 	public void getAquaMetrics() {
 		logger.debug("Requesting PH from Arduino");
 
-//		aquaMetricsCollector.getReading(new SerialResponseCallback() {
-//			
-//			@Override
-//			public void callback(String data) {
-//				AquaMetrics aquaMetrics = null;
-//				try {
-//					aquaMetrics = objectMapper.readValue(data, AquaMetrics.class);
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
+		aquaMetricsCollector.getReading(new SerialResponseCallback() {
+			
+			@Override
+			public void callback(String data) {
+				AquaMetrics aquaMetrics = null;
+				try {
+					aquaMetrics = objectMapper.readValue(data, AquaMetrics.class);
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
 				
-//				if (aquaMetrics == null) {
-//					logger.warn("No metrics data received!");;
-//				}
-				AquaMetrics aquaMetrics = new AquaMetrics();
-				aquaMetrics.setPh(6.5d);
-				aquaMetrics.setTemperature(28.4d);
-				aquaMetrics.setOccuredDatetime(new Date());
-				aquaMetrics.setCurrent(10.2d);
+				if (aquaMetrics == null) {
+					logger.warn("No metrics data received!");;
+				}
+//				AquaMetrics aquaMetrics = new AquaMetrics();
+//				aquaMetrics.setPh(6.5d);
+//				aquaMetrics.setTemperature(28.4d);
+//				aquaMetrics.setOccuredDatetime(new Date());
+//				aquaMetrics.setCurrent(10.2d);
 				
 				logger.debug("Sending message to broker: {}", aquaMetrics);
 				
@@ -109,8 +109,8 @@ public class MetricsCollectScheduler {
 				}
 				messagingTemplate.convertAndSend("/queue/aquaMetrics", aquaMetrics);
 				
-//			}
-//		});
+			}
+		});
 	}
 
 	public interface SerialResponseCallback {

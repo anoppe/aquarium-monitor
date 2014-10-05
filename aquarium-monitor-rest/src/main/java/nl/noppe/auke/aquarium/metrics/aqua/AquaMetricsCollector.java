@@ -33,7 +33,7 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 	public void initialize() {
                 // the next line is for Raspberry Pi and 
                 // gets us into the while loop and was suggested here was suggested http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
-                System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
+                System.setProperty("gnu.io.rxtx.SerialPorts", DEVICE_NAME);
 //                System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
 
 		CommPortIdentifier portId = null;
@@ -42,6 +42,7 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 		//First, Find an instance of serial port as set in PORT_NAMES.
 		while (portEnum.hasMoreElements()) {
 			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+			LOGGER.warn("port: {}", currPortId.getName());
 			if (currPortId.getName().equals(DEVICE_NAME)) {
 				portId = currPortId;
 				LOGGER.debug("portID: {}", portId.toString());
