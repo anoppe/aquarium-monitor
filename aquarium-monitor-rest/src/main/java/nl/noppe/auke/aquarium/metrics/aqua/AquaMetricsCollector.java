@@ -20,6 +20,7 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 	
 	private SerialPort serialPort;
 	private final static String DEVICE_NAME = "/dev/ttyACM0";
+//	private final static String DEVICE_NAME = "/dev/tty.usbmodem1411";
 	
 	/** The output stream to the port */
 	private OutputStream output;

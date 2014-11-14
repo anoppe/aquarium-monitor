@@ -22,6 +22,10 @@ public class MetricsCollectScheduler {
 
 	private static final Logger logger = LoggerFactory.getLogger(MetricsCollectScheduler.class);
 	
+	private volatile double average;
+	private volatile int numberOfMeasurements;
+	private volatile long lastMeasurementDate;
+	
 	private SystemMetricsCollector systemMetricsCollector;
 	private AquaMetricsCollector aquaMetricsCollector;
 	private SimpMessageSendingOperations messagingTemplate;
@@ -91,13 +95,11 @@ public class MetricsCollectScheduler {
 				}
 				
 				if (aquaMetrics == null) {
-					logger.warn("No metrics data received!");;
+					logger.warn("No metrics data received!");
+					return;
 				}
-//				AquaMetrics aquaMetrics = new AquaMetrics();
-//				aquaMetrics.setPh(6.5d);
-//				aquaMetrics.setTemperature(28.4d);
-//				aquaMetrics.setOccuredDatetime(new Date());
-//				aquaMetrics.setCurrent(10.2d);
+
+				aquaMetrics.setOccuredDatetime(new Date());
 				
 				logger.debug("Sending message to broker: {}", aquaMetrics);
 				

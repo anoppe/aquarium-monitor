@@ -7,7 +7,7 @@ angular.module('aqua.monitor.services').service('MessageBusService', ['$q', '$ro
 
 	var stompClient = Stomp.over(socket);
 	stompClient.debug = function(str) {
-//		console.log(str);
+		// console.log(str);
 	};
 	
 	stompClient.connect({}, function(frame) {

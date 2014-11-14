@@ -8,7 +8,6 @@ angular.module('aqua.monitor.directives').directive('highchart', [function() {
         	chartData : '=ngModel'
         },
         link: function(scope, elem, attrs) {
-        	console.log(attrs);
         	
         	var chart = null;
         	var options = {
@@ -22,7 +21,6 @@ angular.module('aqua.monitor.directives').directive('highchart', [function() {
            			},
            			points: { show: false }
            		};
-        	console.log(scope.chartData);
             scope.$watch(function() {
             	var sortedData = [[]]; 
             	angular.forEach(scope.chartData, function(v, k) {

@@ -88,12 +88,10 @@
 				options.series = [{
 					name: 'PH',
 					data: function() {
-						console.log(phData);
 						if (phData == null || phData[phData.length -1] == null) {
 							return 0;
 						}
 						var rawPh = phData[phData.length -1].y;
-						console.log(rawPh);
 						return [Math.round(rawPh * 100) / 100];
 					}(),
 					dataLabels: {
@@ -119,7 +117,6 @@
 				}
 				
 				if (!$scope.temperature.loading) {
-					console.log($scope.temperature.series[0]);
 					$scope.temperature.series[0].data[0] = [metric.temperature];
 				}
 
