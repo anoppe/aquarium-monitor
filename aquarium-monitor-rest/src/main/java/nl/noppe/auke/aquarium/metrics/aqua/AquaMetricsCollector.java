@@ -119,6 +119,14 @@ public class AquaMetricsCollector implements SerialPortEventListener {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
+	
+	public synchronized void toggleMoonLight() {
+		try {
+			output.write(new String("TML").getBytes());
+		} catch(IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
 
 	public synchronized void getReading(SerialResponseCallback serialResponseCallback) {
 		this.serialResponseCallback = serialResponseCallback;

@@ -91,4 +91,10 @@ public class SystemMetrics implements Metrics {
 	public void setAvailableSwap(Long availableSwap) {
 		this.availableSwap = availableSwap;
 	}
-}
+
+	@Override
+	public String toString() {
+		return "SystemMetrics [id=" + id + ", occuredDatetime=" + occuredDatetime + ", usedMemory=" + usedMemory + ", freeMemory=" + freeMemory + ", cpuUtilization=" + cpuUtilization + ", usedSwap="
+				+ usedSwap + ", availableSwap=" + availableSwap + "]";
+	}
+	}

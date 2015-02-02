@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import nl.noppe.auke.aquarium.metrics.Metrics;
 
@@ -30,6 +31,9 @@ public class AquaMetrics implements Metrics {
 	private Double temperature;
 	@Column(name="current")
 	private Double current;
+	
+	@Transient
+	private Integer moonLightState;
 	
 	
 	@Override
@@ -73,10 +77,18 @@ public class AquaMetrics implements Metrics {
 	public void setCurrent(Double current) {
 		this.current = current;
 	}
+
+	public Integer getMoonLightState() {
+		return moonLightState;
+	}
+	
+	public void setMoonLightState(Integer moonLightState) {
+		this.moonLightState = moonLightState;
+	}
 	
 	@Override
 	public String toString() {
-		return "AquaMetrics [id=" + id + ", occuredDatetime=" + occuredDatetime + ", ph=" + ph + ", temperature=" + temperature + "]";
+		return "AquaMetrics [id=" + id + ", occuredDatetime=" + occuredDatetime + ", ph=" + ph + ", temperature=" + temperature + ", current=" + current + ", moonLightState=" + moonLightState + "]";
 	}
 
 }

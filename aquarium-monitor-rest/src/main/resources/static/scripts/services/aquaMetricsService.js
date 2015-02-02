@@ -7,6 +7,7 @@ angular.module('aqua.monitor.services').service('AquaMetricsService', ['$resourc
 			pastDay : {url: 'aquametrics/pastDay', method: 'GET', isArray: true},
 			pastWeek : {url: 'aquametrics/pastWeek', method: 'GET', isArray: true},
 			pastMonth : {url: 'aquametrics/pastMonth', method: 'GET', isArray: true},
+			toggleMoonLight : {url: 'aquametrics/toggleMoonLight', method : 'PUT'}
 		})
 		
 	};

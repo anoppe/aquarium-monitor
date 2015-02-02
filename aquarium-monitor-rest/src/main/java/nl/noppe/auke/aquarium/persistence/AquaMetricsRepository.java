@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AquaMetricsRepository extends CrudRepository<AquaMetrics, String> {
 
-	@Query("FROM AquaMetrics a where a.occuredDatetime > :from")
+	@Query("FROM AquaMetrics a where a.occuredDatetime > :from ORDER BY a.occuredDatetime")
 	List<AquaMetrics> findByDateTimeGreaterThan(@Param("from") Date from);
 }
