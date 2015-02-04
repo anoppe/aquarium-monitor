@@ -78,7 +78,7 @@ public class MetricsCollectScheduler {
 	
 	Random random = new Random();
 	
-	@Scheduled(cron="* * * * * ?")
+	@Scheduled(cron="*/2 * * * * ?")
 	public void getAquaMetrics() {
 		logger.debug("Requesting PH from Arduino");
 
